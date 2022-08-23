@@ -1,3 +1,5 @@
+import { User } from "./user.model";
+
 export interface Plot {
     id?: string;
     street: string;
@@ -6,6 +8,7 @@ export interface Plot {
     zip: string;
     status: PlotStatus;
     paymentPlan: PaymentPlan;
+    homeowners: User[]
 }
 
 export enum PlotStatus {

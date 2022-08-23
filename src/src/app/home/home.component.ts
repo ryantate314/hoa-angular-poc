@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(loadPlots({ userId: "123456" }));
+    this.store.dispatch(loadPlots({ userId: "846516891" }));
   }
 
 }
