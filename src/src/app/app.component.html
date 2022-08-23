@@ -1,6 +1,7 @@
 <div class="container-fluid">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-light bg-light">
     <a class="navbar-brand" [routerLink]="['/']">Vanderbilt HOA</a>
+    <button *ngIf="!(isAuthenticated$ | async)" class="btn btn-primary my-2" (click)="login()">Log In</button>
   </nav>
 </div>
 <div class="container">

@@ -19,6 +19,7 @@
     "@angular/platform-browser": "^14.1.0",
     "@angular/platform-browser-dynamic": "^14.1.0",
     "@angular/router": "^14.1.0",
+    "@auth0/auth0-angular": "^1.10.1",
     "@ng-bootstrap/ng-bootstrap": "^13.0.0",
     "@ngrx/effects": "^14.2.0",
     "@ngrx/entity": "^14.2.0",

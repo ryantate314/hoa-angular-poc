@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,6 +14,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { PlotEffects } from './store/plot/plot.effects';
 import { FAKE_BACKEND_INTERCEPTOR } from './interceptors/fake-back-end.interceptor';
+import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
 
 @NgModule({
   declarations: [
@@ -29,9 +30,18 @@ import { FAKE_BACKEND_INTERCEPTOR } from './interceptors/fake-back-end.intercept
     EffectsModule.forRoot([
       PlotEffects
     ]),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    AuthModule.forRoot({
+      ...environment.auth,
+      httpInterceptor: {
+        allowedList: [
+          `${environment.apiUrl}/users/login`
+        ]
+      }
+    })
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },
     FAKE_BACKEND_INTERCEPTOR
   ],
   bootstrap: [AppComponent]
