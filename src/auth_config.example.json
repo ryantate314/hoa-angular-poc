@@ -1,0 +1,6 @@
+/* Rename this file to auth_config.json and enter the values from the Auth0 dashboard */
+{
+    "clientId": "",
+    "domain": "",
+    "audience": ""
+}
