@@ -11,6 +11,8 @@ import { mergeMap, Observable, of, materialize, delay, dematerialize, timer } fr
 import { PaymentPlan, Plot, PlotStatus } from '../models/plot.model';
 import { User } from '../models/user.model';
 import { v4 as uuidv4 } from 'uuid';
+import jwt_decode, { JwtPayload } from 'jwt-decode';
+import { apiJwtSecret } from './../../../auth_config.json';
 
 interface DataPlot {
   id?: string;
@@ -52,7 +54,7 @@ let users: User[] = [
     email: "ryan.test@claytonhomes.com",
     firstName: "Ryan",
     lastName: "Test",
-    ssoId: "12345789",
+    ssoId: "auth0|62e43ac09ef7eff16baed140",
     id: "846516891"
   }
 ];
@@ -81,18 +83,38 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const { url, method, headers, body, params } = request;
 
+    console.log("Intercepting request", request);
+    const response = handleRoute();
+    console.log("Mock response", response);
+
     // TODO validate JSON token
 
     return timer(500)
-      .pipe(mergeMap(() => of(handleRoute())));
+      .pipe(mergeMap(() => of(response)));
 
     function handleRoute(): HttpEvent<unknown> {
-      if (url.indexOf('/api/v1/plots') && method === "GET")
+      if (url.indexOf('/api/v1/users/login') && method == "POST")
+        return login();
+      else if (url.indexOf('/api/v1/plots') && method === "GET")
         return getPlots();
       else if (url.endsWith('api/v1/plots') && method ==="POST")
         return createPlot();
       else
         return notFound();
+    }
+
+    function login(): HttpResponse<unknown> {
+      const authHeader = headers.get("Authorization");
+      if (authHeader) {
+        const token = authHeader.split(" ")[1];
+        const decodedToken = jwt_decode<JwtPayload>(token);
+        const sub = decodedToken.sub!;
+        const user = users.find(x => x.ssoId === sub);
+        if (user) {
+          return ok(user);
+        }
+      }
+      return unauthorized();
     }
 
     function getPlots(): HttpResponse<unknown> {
@@ -130,6 +152,10 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
 
     function notFound() {
       return new HttpResponse({ status: 404 });
+    }
+
+    function unauthorized() {
+      return new HttpResponse({ status: 401 });
     }
 
     function newId() {

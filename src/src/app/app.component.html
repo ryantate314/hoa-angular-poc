@@ -1,9 +1,13 @@
-<div class="container-fluid">
-  <nav class="navbar navbar-light bg-light">
-    <a class="navbar-brand" [routerLink]="['/']">Vanderbilt HOA</a>
-    <button *ngIf="!(isAuthenticated$ | async)" class="btn btn-primary my-2" (click)="login()">Log In</button>
-  </nav>
-</div>
-<div class="container">
-  <router-outlet></router-outlet>
-</div>
+<ng-container *ngIf="!(isLoading$ | async)">
+  <div class="container-fluid">
+    <nav class="navbar navbar-light bg-light">
+      <a class="navbar-brand" [routerLink]="['/']">Vanderbilt HOA</a>
+      <button *ngIf="!(isAuthenticated$ | async)" class="btn btn-primary my-2" (click)="login()">Log In</button>
+      <button *ngIf="(isAuthenticated$ | async)" class="btn btn-primary my-2" (click)="logout()">Log Out</button>
+
+    </nav>
+  </div>
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</ng-container>

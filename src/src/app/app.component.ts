@@ -11,12 +11,18 @@ export class AppComponent {
   title = 'cmh.vmf.poc.hoa-angular';
 
   isAuthenticated$: Observable<boolean>;
+  isLoading$: Observable<boolean>;
 
   constructor(private authService: AuthService) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
+    this.isLoading$ = this.authService.isLoading$;
   }
 
   login() {
     this.authService.login();
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }
