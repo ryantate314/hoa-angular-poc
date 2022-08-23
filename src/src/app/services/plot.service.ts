@@ -12,17 +12,10 @@ export class PlotService {
   constructor(private http: HttpClient) { }
 
   public getPlots(userId: string): Observable<Plot[]> {
-    return timer(1000).pipe(concatMap(() => of([
-      {
-        id: "123456",
-        street: "123 Test Street",
-        city: "Maryville",
-        state: "TN",
-        zip: "37803",
-        paymentPlan: PaymentPlan.Monthly,
-        status: PlotStatus.Occupied
+    return this.http.get<Plot[]>(`${environment.apiUrl}/plots`, {
+      params: {
+        userId: userId
       }
-    ])));
-    return this.http.get<Plot[]>(`${environment.apiUrl}/plots?userId=${encodeURI(userId)}`);
+    });
   }
 }

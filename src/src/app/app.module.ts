@@ -13,6 +13,7 @@ import { reducers } from './store/app-state';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { PlotEffects } from './store/plot/plot.effects';
+import { FAKE_BACKEND_INTERCEPTOR } from './interceptors/fake-back-end.interceptor';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,9 @@ import { PlotEffects } from './store/plot/plot.effects';
     ]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
   ],
-  providers: [],
+  providers: [
+    FAKE_BACKEND_INTERCEPTOR
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
