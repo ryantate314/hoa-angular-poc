@@ -1,9 +1,9 @@
-<div *ngIf="(plots$ | async) as plots else loading">
-    <div *ngFor="let plot of plots" class="mb-4">
+<div *ngIf="!(plotsLoading$ | async); else loading">
+    <div *ngFor="let plot of plots$ | async" class="mb-4">
         {{plot.street}}
     </div>
 </div>
 
 <ng-template #loading>
-    Loading...
+    <p>Loading...</p>
 </ng-template>
