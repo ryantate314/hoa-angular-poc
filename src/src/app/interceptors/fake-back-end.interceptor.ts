@@ -6,12 +6,19 @@ import {
   HttpInterceptor,
   HTTP_INTERCEPTORS,
   HttpResponse,
+  HttpErrorResponse,
 } from '@angular/common/http';
-import { mergeMap, Observable, of, materialize, delay, dematerialize, timer } from 'rxjs';
+import { mergeMap, Observable, of, materialize, delay, dematerialize, timer, throwError } from 'rxjs';
 import { PaymentPlan, Plot, PlotStatus } from '../models/plot.model';
 import { User } from '../models/user.model';
 import { v4 as uuidv4 } from 'uuid';
-import jwt_decode, { JwtPayload } from 'jwt-decode';
+import jwt_decode, { JwtPayload as BaseJwtPayload } from 'jwt-decode';
+
+const CLAIMS_EMAIL = "https://www.myhomeaccount.com/email";
+
+interface JwtPayload extends BaseJwtPayload {
+  [CLAIMS_EMAIL]: string;
+}
 
 interface DataPlot {
   id?: string;
@@ -53,7 +60,7 @@ let users: User[] = [
     email: "ryan.test@claytonhomes.com",
     firstName: "Ryan",
     lastName: "Test",
-    ssoId: "auth0|62e43ac09ef7eff16baed140",
+    ssoId: "auth0|62e43ac09ef7eff16baed140z",
     id: "846516891"
   }
 ];
@@ -82,16 +89,23 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const { url, method, headers, body, params } = request;
 
-    console.log("Intercepting request", request);
+    console.log("Intercepting request to " + url, request);
+    
+    const token = parseJwt();
     const response = handleRoute();
-    console.log("Mock response", response);
 
-    // TODO validate JSON token
+    console.log("Mock response from " + url, response);
 
+    // Add a simulated delay
     return timer(500)
-      .pipe(mergeMap(() => of(response)));
+      .pipe(mergeMap(() => response));
 
-    function handleRoute(): HttpEvent<unknown> {
+    function handleRoute(): Observable<HttpEvent<unknown>> {
+      if (token === null) {
+        console.log("No token found in request");
+        return unauthorized();
+      }
+
       if (url.indexOf('/api/v1/users/login') && method == "POST")
         return login();
       else if (url.indexOf('/api/v1/plots') && method === "GET")
@@ -102,21 +116,48 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         return notFound();
     }
 
-    function login(): HttpResponse<unknown> {
-      const authHeader = headers.get("Authorization");
+    function parseJwt(): JwtPayload | null {
+      let payload: JwtPayload | null = null;
+
+      const authHeader = headers.get("Authorization") ?? headers.get("authorization");
       if (authHeader) {
         const token = authHeader.split(" ")[1];
-        const decodedToken = jwt_decode<JwtPayload>(token);
-        const sub = decodedToken.sub!;
-        const user = users.find(x => x.ssoId === sub);
+        payload = jwt_decode<JwtPayload>(token);
+      }
+      
+      return payload;
+    }
+
+    function login(): Observable<HttpEvent<unknown>> {
+      if (token) {        
+        const auth0UserId = token.sub!;
+        let user = users.find(x => x.ssoId === auth0UserId);
         if (user) {
           return ok(user);
+        }
+        else {
+          // Find user by email
+          const email = token[CLAIMS_EMAIL];
+          user = users.find(x => x.email !== null && x.email?.toLowerCase() == email?.toLowerCase());
+          if (user !== undefined) {
+            console.log("Assigning new user", user.email);
+            // Assign user
+            users = users.map(x => x.id === user!.id ? {
+              ...x,
+              ssoId: auth0UserId
+            } : x);
+            saveSession();
+            return ok(user);
+          }
+          else {
+            return notFound();
+          }
         }
       }
       return unauthorized();
     }
 
-    function getPlots(): HttpResponse<unknown> {
+    function getPlots(): Observable<HttpEvent<unknown>> {
       if (params.get("userId")) {
         // TODO Authorize the user to this ID
         const userId = params.get("userId");
@@ -130,7 +171,7 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       }
     }
 
-    function createPlot(): HttpResponse<unknown> {
+    function createPlot(): Observable<HttpEvent<unknown>> {
       // TODO Authorize the user can create plots
       const newPlot: DataPlot = {
         ...<Plot>body,
@@ -146,15 +187,21 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
     }
 
     function ok(body: any = null) {
-      return new HttpResponse({ status: 200, body });
+      return of(new HttpResponse({ status: 200, body }));
     }
 
     function notFound() {
-      return new HttpResponse({ status: 404 });
+      return throwError(() => new HttpErrorResponse({
+        status: 404,
+        statusText: "Not Found"
+      }));
     }
 
     function unauthorized() {
-      return new HttpResponse({ status: 401 });
+      return throwError(() => new HttpErrorResponse({
+        status: 401,
+        statusText: "Unauthorized"
+      }));
     }
 
     function newId() {

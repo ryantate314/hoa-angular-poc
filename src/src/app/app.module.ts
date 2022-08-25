@@ -15,11 +15,14 @@ import { environment } from '../environments/environment';
 import { PlotEffects } from './store/plot/plot.effects';
 import { FAKE_BACKEND_INTERCEPTOR } from './interceptors/fake-back-end.interceptor';
 import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
+import { OnboardingComponent } from './onboarding/onboarding.component';
+import { UserEffects } from './store/user/user.effects';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    OnboardingComponent
   ],
   imports: [
     BrowserModule,
@@ -28,14 +31,15 @@ import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
     HttpClientModule,
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([
-      PlotEffects
+      PlotEffects,
+      UserEffects
     ]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     AuthModule.forRoot({
       ...environment.auth,
       httpInterceptor: {
         allowedList: [
-          `${environment.apiUrl}/users/login`
+          `${environment.apiUrl}/*`
         ]
       }
     })
