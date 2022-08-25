@@ -8,7 +8,7 @@ import {
   HttpResponse,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { mergeMap, Observable, of, materialize, delay, dematerialize, timer, throwError, concatMap } from 'rxjs';
+import { mergeMap, Observable, of, materialize, delay, dematerialize, timer, throwError, concatMap, tap } from 'rxjs';
 import { PaymentPlan, Plot, PlotStatus } from '../models/plot.model';
 import { User } from '../models/user.model';
 import { v4 as uuidv4 } from 'uuid';
@@ -107,21 +107,20 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const { url, method, headers, body, params } = request;
 
-    console.log("Intercepting request to " + url, request);
-    
     const token = parseJwt();
-    const response = handleRoute();
-
-    response.subscribe({
-      next: (res) => 
-        console.log("Mock response from " + url, res),
-      error: (error) =>
-        console.log("Mock response from " + url, error)
-    });
-
-    // Add a simulated delay
-    return timer(500)
-      .pipe(concatMap(() => response));
+    
+    // Add a simulated delay. Place the call to handleRoute() inside the observable chain, because
+    // the Auth0 interceptor relies on the observable not being subscribed to. Otherwise there are duplicate calls.
+    return timer(500).pipe(
+      concatMap(() => {
+        console.log("Intercepting request to " + url, request);
+        return handleRoute();
+      }),
+      tap({
+        next: res => console.log("Mocked response to " + url, res),
+        error: err => console.log("Mocked response to " + url, err)
+      })
+    );
 
     function handleRoute(): Observable<HttpEvent<unknown>> {
       if (token === null) {

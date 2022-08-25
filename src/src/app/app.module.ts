@@ -14,7 +14,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { PlotEffects } from './store/plot/plot.effects';
 import { FAKE_BACKEND_INTERCEPTOR } from './interceptors/fake-back-end.interceptor';
-import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
+import { AuthModule, AuthHttpInterceptor } from '@auth0/auth0-angular';
 import { OnboardingComponent } from './onboarding/onboarding.component';
 import { UserEffects } from './store/user/user.effects';
 import { EventEffects } from './store/event/event.effects';
