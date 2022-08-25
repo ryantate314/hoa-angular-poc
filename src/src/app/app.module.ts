@@ -17,6 +17,7 @@ import { FAKE_BACKEND_INTERCEPTOR } from './interceptors/fake-back-end.intercept
 import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
 import { OnboardingComponent } from './onboarding/onboarding.component';
 import { UserEffects } from './store/user/user.effects';
+import { EventEffects } from './store/event/event.effects';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { UserEffects } from './store/user/user.effects';
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([
       PlotEffects,
-      UserEffects
+      UserEffects,
+      EventEffects
     ]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     AuthModule.forRoot({

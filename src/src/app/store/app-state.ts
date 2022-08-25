@@ -1,13 +1,16 @@
 import { Action, ActionReducer, ActionReducerMap } from "@ngrx/store";
 import * as fromPlot from "./plot";
 import * as fromUser from "./user";
+import * as fromEvent from "./event";
 
 export interface AppState {
     plot: fromPlot.PlotState,
-    user: fromUser.UserState
+    user: fromUser.UserState,
+    event: fromEvent.EventState
 }
 
 export const reducers: ActionReducerMap<AppState> = {
-    plot: <ActionReducer<fromPlot.PlotState, Action>>fromPlot.plotReducer,
-    user: <ActionReducer<fromUser.UserState, Action>>fromUser.userReducer
+    plot: fromPlot.plotReducer,
+    user: fromUser.userReducer,
+    event: fromEvent.eventReducer
 };
