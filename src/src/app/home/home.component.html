@@ -1,8 +1,18 @@
-<div *ngIf="!(plotsLoading$ | async); else loading">
-    <div *ngFor="let plot of plots$ | async" class="mb-4">
-        {{plot.street}}
-    </div>
-</div>
+<ng-container *ngIf="!(userLoading$ | async); else loading">
+    <ng-container *ngIf="!(isAuthenticated$ | async)">
+        <div class="text-center">
+            <h1>Welcome to Vanderbilt HOA</h1>
+            <p>Log in or create an account to access the Portal.</p>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="isAuthenticated$ | async">
+        <div *ngIf="!(plotsLoading$ | async); else loading">
+            <div *ngFor="let plot of plots$ | async" class="mb-4">
+                {{plot.street}}
+            </div>
+        </div>
+    </ng-container>
+</ng-container>
 
 <ng-template #loading>
     <p>Loading...</p>
