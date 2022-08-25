@@ -8,11 +8,12 @@ import {
   HttpResponse,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { mergeMap, Observable, of, materialize, delay, dematerialize, timer, throwError } from 'rxjs';
+import { mergeMap, Observable, of, materialize, delay, dematerialize, timer, throwError, concatMap } from 'rxjs';
 import { PaymentPlan, Plot, PlotStatus } from '../models/plot.model';
 import { User } from '../models/user.model';
 import { v4 as uuidv4 } from 'uuid';
 import jwt_decode, { JwtPayload as BaseJwtPayload } from 'jwt-decode';
+import { Event } from '../models/event.model';
 
 const CLAIMS_EMAIL = "https://www.myhomeaccount.com/email";
 
@@ -60,8 +61,20 @@ let users: User[] = [
     email: "ryan.test@claytonhomes.com",
     firstName: "Ryan",
     lastName: "Test",
-    ssoId: "auth0|62e43ac09ef7eff16baed140z",
+    ssoId: "auth0|62e43ac09ef7eff16baed140",
     id: "846516891"
+  }
+];
+
+let events: Event[] = [
+  {
+    id: "asdfasdfasdfasdf",
+    name: "Pool Party",
+    description: "Party at the pool.",
+    startDate: new Date(2022, 12, 25, 17),
+    endDate: new Date(2022, 12, 25, 18),
+    imageUrl: null,
+    location: "Clubhouse"
   }
 ];
 
@@ -70,13 +83,18 @@ if (sessionString) {
   const session = JSON.parse(sessionString);
   plots = session.plots;
   users = session.users;
+  events = session.events;
+}
+else {
+  saveSession();
 }
 
 /** Save the current session data to session storage to be re-loaded upon refresh */
 function saveSession() {
   const session = {
     plots: plots,
-    users: users
+    users: users,
+    events: events
   };
   sessionStorage.setItem("mock-back-end-state", JSON.stringify(session));
 }
@@ -94,11 +112,16 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
     const token = parseJwt();
     const response = handleRoute();
 
-    console.log("Mock response from " + url, response);
+    response.subscribe({
+      next: (res) => 
+        console.log("Mock response from " + url, res),
+      error: (error) =>
+        console.log("Mock response from " + url, error)
+    });
 
     // Add a simulated delay
     return timer(500)
-      .pipe(mergeMap(() => response));
+      .pipe(concatMap(() => response));
 
     function handleRoute(): Observable<HttpEvent<unknown>> {
       if (token === null) {
@@ -106,12 +129,14 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         return unauthorized();
       }
 
-      if (url.indexOf('/api/v1/users/login') && method == "POST")
+      if (url.endsWith('/api/v1/users/login') && method == "POST")
         return login();
-      else if (url.indexOf('/api/v1/plots') && method === "GET")
+      else if (url.includes('/api/v1/plots') && method === "GET")
         return getPlots();
-      else if (url.endsWith('api/v1/plots') && method ==="POST")
+      else if (url.endsWith('api/v1/plots') && method === "POST")
         return createPlot();
+      else if (url.endsWith('api/v1/events') && method === "GET")
+        return getEvents();
       else
         return notFound();
     }
@@ -184,6 +209,12 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       ];
       saveSession();
       return ok(newPlot);
+    }
+
+    function getEvents(): Observable<HttpEvent<unknown>> {
+      return ok([
+        ...events
+      ]);
     }
 
     function ok(body: any = null) {

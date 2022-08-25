@@ -8,7 +8,7 @@ export interface Plot {
     zip: string;
     status: PlotStatus;
     paymentPlan: PaymentPlan;
-    homeowners: User[]
+    homeowners: User[];
 }
 
 export enum PlotStatus {

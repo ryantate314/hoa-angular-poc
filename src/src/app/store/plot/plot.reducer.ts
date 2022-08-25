@@ -24,7 +24,7 @@ export const initialState = entityAdapter.getInitialState({
     selectedPlot: null
 });
 
-export const plotReducer = createReducer(initialState,
+export const plotReducer = createReducer<PlotState>(initialState,
     on(loadPlots, state => ({
         ...state,
         plotsLoading: true
