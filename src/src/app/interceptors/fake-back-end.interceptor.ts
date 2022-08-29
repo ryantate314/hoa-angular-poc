@@ -10,7 +10,7 @@ import {
 } from '@angular/common/http';
 import { mergeMap, Observable, of, materialize, delay, dematerialize, timer, throwError, concatMap, tap } from 'rxjs';
 import { PaymentPlan, Plot, PlotStatus } from '../models/plot.model';
-import { User } from '../models/user.model';
+import { Role, User } from '../models/user.model';
 import { v4 as uuidv4 } from 'uuid';
 import jwt_decode, { JwtPayload as BaseJwtPayload } from 'jwt-decode';
 import { Event } from '../models/event.model';
@@ -85,14 +85,16 @@ let users: User[] = [
     firstName: "Ryan",
     lastName: "Test",
     ssoId: "auth0|62e43ac09ef7eff16baed140",
-    id: "846516891"
+    id: "846516891",
+    role: Role.Admin
   },
   {
     email: "charles.stheno@claytonhomes.com",
     firstName: "Chuck",
     lastName: "Test",
     ssoId: null,
-    id: "8465168asdfasdf"
+    id: "8465168asdfasdf",
+    role: Role.Homeowner
   }
 ];
 

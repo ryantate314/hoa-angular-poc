@@ -7,6 +7,11 @@ import { OnboardingComponent } from './onboarding/onboarding.component';
 const routes: Routes = [
   { path: "home", component: HomeComponent },
   { path: "onboarding", component: OnboardingComponent },
+  {
+    path: "admin",
+    canActivate: [ AuthGuard ],
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
+  },
   { path: "", redirectTo: "home", pathMatch: "full" }
 ];
 
