@@ -18,6 +18,7 @@ import { AuthModule, AuthHttpInterceptor } from '@auth0/auth0-angular';
 import { OnboardingComponent } from './onboarding/onboarding.component';
 import { UserEffects } from './store/user/user.effects';
 import { EventEffects } from './store/event/event.effects';
+import { TransactionEffects } from './store/transaction/transaction.effects';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { EventEffects } from './store/event/event.effects';
     EffectsModule.forRoot([
       PlotEffects,
       UserEffects,
-      EventEffects
+      EventEffects,
+      TransactionEffects
     ]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     AuthModule.forRoot({
