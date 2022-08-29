@@ -14,6 +14,7 @@ import { User } from '../models/user.model';
 import { v4 as uuidv4 } from 'uuid';
 import jwt_decode, { JwtPayload as BaseJwtPayload } from 'jwt-decode';
 import { Event } from '../models/event.model';
+import { TransactionType } from '../models/transaction.model';
 
 const CLAIMS_EMAIL = "https://www.myhomeaccount.com/email";
 
@@ -30,6 +31,16 @@ interface DataPlot {
   status: PlotStatus;
   paymentPlan: PaymentPlan;
   homeowners: string[];
+}
+
+interface DataTransaction {
+  id?: string;
+  userId: string | null;
+  type: TransactionType,
+  amount: number;
+  date: string;
+  description: string;
+  plotId: string;
 }
 
 // Sample data the first time the user loads the application
@@ -56,6 +67,18 @@ let plots: DataPlot[] = [
   }
 ];
 
+let transactions: DataTransaction[] = [
+ {
+  id: "asdf123",
+  amount: 187.63,
+  date: "2022-08-01T00:00:00.000Z",
+  description: "HOA Dues",
+  type: TransactionType.Debit,
+  userId: null,
+  plotId: "12345"
+ }
+];
+
 let users: User[] = [
   {
     email: "ryan.test@claytonhomes.com",
@@ -63,6 +86,13 @@ let users: User[] = [
     lastName: "Test",
     ssoId: "auth0|62e43ac09ef7eff16baed140",
     id: "846516891"
+  },
+  {
+    email: "charles.stheno@claytonhomes.com",
+    firstName: "Chuck",
+    lastName: "Test",
+    ssoId: null,
+    id: "8465168asdfasdf"
   }
 ];
 
@@ -84,6 +114,7 @@ if (sessionString) {
   plots = session.plots;
   users = session.users;
   events = session.events;
+  transactions = session.transactions;
 }
 else {
   saveSession();
@@ -94,7 +125,8 @@ function saveSession() {
   const session = {
     plots: plots,
     users: users,
-    events: events
+    events: events,
+    transactions: transactions
   };
   sessionStorage.setItem("mock-back-end-state", JSON.stringify(session));
 }
@@ -110,7 +142,7 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
     const token = parseJwt();
     
     // Add a simulated delay. Place the call to handleRoute() inside the observable chain, because
-    // the Auth0 interceptor relies on the observable not being subscribed to. Otherwise there are duplicate calls.
+    // the Auth0 interceptor relies on the observable not being subscribed to. Otherwise, there are duplicate calls.
     return timer(500).pipe(
       concatMap(() => {
         console.log("Intercepting request to " + url, request);
@@ -136,6 +168,8 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         return createPlot();
       else if (url.endsWith('api/v1/events') && method === "GET")
         return getEvents();
+      else if (url.endsWith('api/v1/transactions') && method === "GET")
+        return getTransactions();
       else
         return notFound();
     }
@@ -214,6 +248,15 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       return ok([
         ...events
       ]);
+    }
+
+    function getTransactions(): Observable<HttpEvent<unknown>> {
+      const plotId = params.get("plotId");
+      // TOOD authorize the user to this plot
+      return ok(
+        transactions.filter(x => x.plotId == plotId)
+          .map(trans => ({ ...trans }))
+      );
     }
 
     function ok(body: any = null) {
