@@ -7,7 +7,7 @@ import * as fromPlot from '../store/plot/';
 import * as fromUser from '../store/user/';
 import * as fromEvent from '../store/event';
 import { loadPlots } from '../store/plot/';
-import { User } from '../models/user.model';
+import { Role, User } from '../models/user.model';
 import { UserStatus } from '../store/user/';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -54,6 +54,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       map(x => x!),
       takeUntil(this.destroyed$)
     ).subscribe((user) => {
+      if (user.role === Role.Admin) {
+        this.router.navigate(['/', 'admin']);
+        return;
+      }
+
       this.store.dispatch(loadPlots({ userId: user.id! }));
       this.store.dispatch(loadEvents());
     });

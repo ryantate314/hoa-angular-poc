@@ -19,6 +19,7 @@ import { OnboardingComponent } from './onboarding/onboarding.component';
 import { UserEffects } from './store/user/user.effects';
 import { EventEffects } from './store/event/event.effects';
 import { TransactionEffects } from './store/transaction/transaction.effects';
+import { AdminModule } from './admin/admin.module';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { TransactionEffects } from './store/transaction/transaction.effects';
           `${environment.apiUrl}/*`
         ]
       }
-    })
+    }),
+    AdminModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },
