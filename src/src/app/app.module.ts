@@ -5,7 +5,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './pages/home/home.component';
 import { StoreModule } from '@ngrx/store';
 import { plotReducer } from './store/plot/plot.reducer';
 import { EffectsModule } from '@ngrx/effects';
@@ -15,7 +15,7 @@ import { environment } from '../environments/environment';
 import { PlotEffects } from './store/plot/plot.effects';
 import { FAKE_BACKEND_INTERCEPTOR } from './interceptors/fake-back-end.interceptor';
 import { AuthModule, AuthHttpInterceptor } from '@auth0/auth0-angular';
-import { OnboardingComponent } from './onboarding/onboarding.component';
+import { OnboardingComponent } from './pages/onboarding/onboarding.component';
 import { UserEffects } from './store/user/user.effects';
 import { EventEffects } from './store/event/event.effects';
 import { TransactionEffects } from './store/transaction/transaction.effects';
@@ -23,12 +23,17 @@ import { AdminModule } from './admin/admin.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatButtonModule } from '@angular/material/button';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { PlotsComponent } from './pages/plots/plots.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    OnboardingComponent
+    OnboardingComponent,
+    ToolbarComponent,
+    PlotsComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +58,8 @@ import { MatButtonModule } from '@angular/material/button';
     }),
     AdminModule,
     BrowserAnimationsModule,
-    MatButtonModule
+    MatButtonModule,
+    MatToolbarModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },

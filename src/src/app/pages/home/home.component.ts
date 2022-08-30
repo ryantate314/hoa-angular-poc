@@ -1,18 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { filter, map, Observable, Subject, takeUntil } from 'rxjs';
-import { Plot } from '../models/plot.model';
-import { AppState } from '../store/app-state';
-import * as fromPlot from '../store/plot/';
-import * as fromUser from '../store/user/';
-import * as fromEvent from '../store/event';
-import { loadPlots } from '../store/plot/';
-import { Role, User } from '../models/user.model';
-import { UserStatus } from '../store/user/';
+import { Plot } from '../../models/plot.model';
+import { AppState } from '../../store/app-state';
+import * as fromPlot from '../../store/plot';
+import * as fromUser from '../../store/user';
+import * as fromEvent from '../../store/event';
+import { loadPlots } from '../../store/plot';
+import { Role, User } from '../../models/user.model';
+import { UserStatus } from '../../store/user';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { Event } from '../models/event.model';
-import { loadEvents } from '../store/event';
+import { AuthService } from '../../services/auth.service';
+import { Event } from '../../models/event.model';
+import { loadEvents } from '../../store/event';
 
 @Component({
   selector: 'app-home',

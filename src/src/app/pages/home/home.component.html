@@ -9,20 +9,6 @@
             </div>
         </div>
     </ng-container>
-    <ng-container *ngIf="isAuthenticated$ | async">
-        <h2>Plot(s)</h2>
-        <div *ngIf="!(plotsLoading$ | async)">
-            <div *ngFor="let plot of plots$ | async" class="mb-4">
-                {{plot.street}}
-            </div>
-        </div>
-        <h2>Events</h2>
-        <div *ngIf="!(eventsLoading$ | async)">
-            <div *ngFor="let event of events$ | async">
-                <p>{{event.startDate | date}} - {{event.name}}</p>
-            </div>
-        </div>
-    </ng-container>
 </ng-container>
 
 <ng-template #loading>

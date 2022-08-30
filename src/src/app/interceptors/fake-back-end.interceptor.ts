@@ -86,7 +86,7 @@ let users: User[] = [
     lastName: "Test",
     ssoId: "auth0|62e43ac09ef7eff16baed140",
     id: "846516891",
-    role: Role.Admin
+    role: Role.Homeowner
   },
   {
     email: "charles.stehno@claytonhomes.com",
