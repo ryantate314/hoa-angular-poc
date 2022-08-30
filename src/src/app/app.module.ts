@@ -20,6 +20,7 @@ import { UserEffects } from './store/user/user.effects';
 import { EventEffects } from './store/event/event.effects';
 import { TransactionEffects } from './store/transaction/transaction.effects';
 import { AdminModule } from './admin/admin.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { AdminModule } from './admin/admin.module';
         ]
       }
     }),
-    AdminModule
+    AdminModule,
+    BrowserAnimationsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },
