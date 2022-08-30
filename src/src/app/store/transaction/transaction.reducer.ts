@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityState } from "@ngrx/entity";
 import { createReducer, on } from "@ngrx/store";
 import { Transaction } from "src/app/models/transaction.model";
-import { loadTransactions, loadTransactionsSuccess } from "./transaction.actions";
+import { createTransactionSuccess, loadTransactions, loadTransactionsSuccess } from "./transaction.actions";
 
 
 export interface TransactionState extends EntityState<Transaction> {
@@ -25,5 +25,8 @@ export const transactionReducer = createReducer<TransactionState>(initialState,
     on(loadTransactionsSuccess, (state, action) => ({
         ...entityAdapter.setAll(action.transactions, state),
         isLoading: false
+    })),
+    on(createTransactionSuccess, (state, action) => ({
+        ...entityAdapter.addOne(action.transaction, state)
     }))
 );

@@ -6,6 +6,9 @@ import { Role } from '../../models/user.model';
 import { AppState } from '../../store/app-state';
 import { getCurrentUser } from '../../store/user';
 
+/**
+ * Ensures users are in the Admin role in order to access the provided routes.
+ */
 @Injectable({
   providedIn: 'root'
 })

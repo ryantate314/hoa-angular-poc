@@ -14,7 +14,7 @@ import { Role, User } from '../models/user.model';
 import { v4 as uuidv4 } from 'uuid';
 import jwt_decode, { JwtPayload as BaseJwtPayload } from 'jwt-decode';
 import { Event } from '../models/event.model';
-import { TransactionType } from '../models/transaction.model';
+import { Transaction, TransactionType } from '../models/transaction.model';
 
 const CLAIMS_EMAIL = "https://www.myhomeaccount.com/email";
 
@@ -172,6 +172,8 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         return getEvents();
       else if (url.endsWith('api/v1/transactions') && method === "GET")
         return getTransactions();
+      else if (url.endsWith('api/v1/transactions') && method === "POST")
+        return createTransaction();
       else
         return notFound();
     }
@@ -257,8 +259,30 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       // TOOD authorize the user to this plot
       return ok(
         transactions.filter(x => x.plotId == plotId)
-          .map(trans => ({ ...trans }))
+          // HACK because the field names are the same, we can return the data object directly
+          .map(trans => ({
+            ...trans,
+          }))
       );
+    }
+
+    function createTransaction(): Observable<HttpEvent<unknown>> {
+      const tran = <Transaction>body;
+      const plotId = params.get("plotId")!;
+      // TODO authorize the user to this plot
+      // TOOD ensure UserId is the same as token userId
+      const newDataTran: DataTransaction = {
+        ...tran,
+        id: newId(),
+        plotId: plotId,
+        date: new Date().toISOString()
+      };
+      transactions = [
+        ...transactions,
+        newDataTran
+      ];
+      // HACK because the field names are the same, we can return the data object directly
+      return ok(newDataTran);
     }
 
     function ok(body: any = null) {

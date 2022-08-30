@@ -25,6 +25,18 @@ export class TransactionService {
         // Parse the string JSON date into a JavaScript date object
         date: new Date(transaction.date)
       })))
-    )
+    );
+  }
+
+  public createTransaction(plotId: string, transaction: Transaction): Observable<Transaction> {
+    return this.http.post<Transaction>(
+      `${environment.apiUrl}/transactions`,
+      transaction,
+      {
+        params: {
+          plotId: plotId
+        }
+      }
+    );
   }
 }

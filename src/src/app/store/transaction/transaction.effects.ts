@@ -11,12 +11,21 @@ export class TransactionEffects {
 
     constructor(private actions$: Actions, private transactionService: TransactionService) {}
 
-    loadPlots$ = createEffect(() => this.actions$.pipe(
+    loadTransactions$ = createEffect(() => this.actions$.pipe(
         ofType(fromTransaction.loadTransactions),
-        switchMap(action => this.transactionService.getTransactions(action.userId)
+        switchMap(action => this.transactionService.getTransactions(action.plotId)
             .pipe(
                 map(transactions => fromTransaction.loadTransactionsSuccess({ transactions: transactions })),
                 catchError((error) => of(fromTransaction.loadTransactionsFailure({ error: error })))
+            ))
+    ));
+
+    createTransaction$ = createEffect(() => this.actions$.pipe(
+        ofType(fromTransaction.createTransaction),
+        switchMap(action => this.transactionService.createTransaction(action.plotId, action.transaction)
+            .pipe(
+                map(transaction => fromTransaction.createTransactionSuccess({ transaction: transaction })),
+                catchError((error) => of(fromTransaction.createTransactionFailure({ error: error })))
             ))
     ));
 

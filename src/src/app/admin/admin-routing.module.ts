@@ -8,7 +8,9 @@ const routes: Routes = [
     path: '',
     canActivate: [AdminGuard],
     children: [
+      // URL: /admin/home
       { path: 'home', component: HomeComponent },
+      // URL: /admin/
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   }
