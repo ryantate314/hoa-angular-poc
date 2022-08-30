@@ -75,4 +75,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.destroyed$.next();
   }
 
+  login() {
+    this.authService.login();
+  }
+
 }

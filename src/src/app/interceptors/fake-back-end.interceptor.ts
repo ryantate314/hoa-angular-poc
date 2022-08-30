@@ -89,7 +89,7 @@ let users: User[] = [
     role: Role.Admin
   },
   {
-    email: "charles.stheno@claytonhomes.com",
+    email: "charles.stehno@claytonhomes.com",
     firstName: "Chuck",
     lastName: "Test",
     ssoId: null,

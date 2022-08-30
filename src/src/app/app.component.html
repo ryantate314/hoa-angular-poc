@@ -1,14 +1,1 @@
-<ng-container *ngIf="!(isLoading$ | async)">
-
-  <nav class="navbar navbar-dark bg-primary">
-    <div class="container-fluid">
-      <a class="navbar-brand" [routerLink]="['/']">Vanderbilt HOA</a>
-      <button *ngIf="!(isAuthenticated$ | async)" class="btn btn-secondary my-2" (click)="login()">Log In</button>
-      <button *ngIf="(isAuthenticated$ | async)" class="btn text-white my-2" (click)="logout()">Log Out</button>
-    </div>
-  </nav>
-
-  <div class="container">
-    <router-outlet></router-outlet>
-  </div>
-</ng-container>
+<router-outlet></router-outlet>
