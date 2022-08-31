@@ -1,0 +1,69 @@
+<app-toolbar></app-toolbar>
+<div class="container">
+    <h1>Hi, {{ (user$ | async)!.firstName }}</h1>
+    <ng-container *ngIf="!(isLoading$ | async) else loading">
+        <ng-container *ngIf="plot$ | async as plot">
+            <div class="row mb-3">
+                <div class="col-md-10">
+                    <h2>{{plot.street}}</h2>
+                </div>
+                <div class="col-md-2">
+                    <h2>
+                        <span class="d-md-none">Account Balance:</span>
+                        {{ plot.accountBalance | currency }}
+                    </h2>
+                </div>
+            </div>
+
+            <p class="text-success">Your account is in good standing.</p>
+
+            <div *ngIf="otherOwners$ | async as otherOwners" class="mb-3">
+                <h3>Other Owners</h3>
+                <div class="d-flex">
+                    <span class="me-2" *ngFor="let owner of otherOwners">{{ owner.firstName }} {{ owner.lastName }}</span>
+                </div>
+            </div>
+            
+            <!-- Transactions -->
+            <div class="row">
+                <div class="col-md-10">
+                    <h3 id="transactions">Payments and Fees</h3>
+                </div>
+                <div class="col-md-2">
+                    <button mat-raised-button color="primary" [routerLink]="['payment']">Make Payment</button>
+                </div>
+            </div><!-- /.row -->
+                
+            <table mat-table [dataSource]="(transactions$ | async)!">
+                <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef> Date </th>
+                    <td mat-cell *matCellDef="let trans"> {{ trans.date | date: 'short' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> Type </th>
+                    <td mat-cell *matCellDef="let trans"> {{ trans.type }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef> Description </th>
+                    <td mat-cell *matCellDef="let trans"> {{ trans.description }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="amount">
+                    <th mat-header-cell *matHeaderCellDef> Amount </th>
+                    <td mat-cell *matCellDef="let trans"> {{ trans.amount | currency }} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['date', 'type', 'description', 'amount']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['date', 'type', 'description', 'amount']"></tr>
+            </table>
+            
+            
+        </ng-container>
+    </ng-container>
+</div>
+
+<ng-template #loading>
+    Loading...
+</ng-template>

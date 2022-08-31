@@ -5,8 +5,15 @@ import { loadPlots, loadPlotsFailure, loadPlotsSuccess } from "./plot.actions";
 
 export const FEATURE_NAME = "plot";
 
+export enum PlotStatus {
+    Initial = "Initial",
+    Loading = "Loading",
+    Loaded = "Loaded",
+    Failed = "Failed"
+}
+
 export interface PlotState extends EntityState<Plot> {
-    plotsLoading: boolean;
+    status: PlotStatus;
     selectedPlot: string | null;
 }
 
@@ -20,24 +27,24 @@ export const entityAdapter: EntityAdapter<Plot> = createEntityAdapter<Plot>({
 });
 
 export const initialState = entityAdapter.getInitialState({
-    plotsLoading: false,
+    status: PlotStatus.Initial,
     selectedPlot: null
 });
 
 export const plotReducer = createReducer<PlotState>(initialState,
     on(loadPlots, state => ({
         ...state,
-        plotsLoading: true
+        status: PlotStatus.Loading
     })),
     on(loadPlotsSuccess, (state, action) => {
         const newState = entityAdapter.setAll(action.plots, state);
         return {
             ...newState,
-            plotsLoading: false
+            status: PlotStatus.Loaded
         };
     }),
     on(loadPlotsFailure, state => ({
         ...state,
-        plotsLoading: false
+        status: PlotStatus.Failed
     }))
 );

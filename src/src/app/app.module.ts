@@ -23,9 +23,23 @@ import { AdminModule } from './admin/admin.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { PlotsComponent } from './pages/plots/plots.component';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { PlotDetailsComponent } from './pages/plot-details/plot-details.component';
+import { PaymentComponent } from './pages/payment/payment.component';
+import { LoadingComponent } from './components/loading/loading.component';
+import { CreditCardInputComponent } from './components/credit-card-input/credit-card-input.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   declarations: [
@@ -33,13 +47,19 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     HomeComponent,
     OnboardingComponent,
     ToolbarComponent,
-    PlotsComponent
+    PlotsComponent,
+    PlotDetailsComponent,
+    PaymentComponent,
+    LoadingComponent,
+    CreditCardInputComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     NgbModule,
     HttpClientModule,
+    ReactiveFormsModule,
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([
       PlotEffects,
@@ -59,7 +79,15 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     AdminModule,
     BrowserAnimationsModule,
     MatButtonModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatCardModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    FontAwesomeModule,
+    NgxMaskModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },

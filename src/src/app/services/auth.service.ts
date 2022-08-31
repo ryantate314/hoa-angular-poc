@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
-import { Observable } from 'rxjs';
+import { filter, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
 
@@ -18,6 +18,9 @@ export class AuthService {
     this.isLoading$ = this.auth0.isLoading$;
 
     //TODO update NgRx user whenever Auth0 user is updated
+    // this.isAuthenticated$.pipe(
+    //   filter(isAuthenticated => isAuthenticated)
+    // ).subscribe()
   }
 
   public login() {

@@ -53,7 +53,7 @@ let plots: DataPlot[] = [
     zip: "37803",
     paymentPlan: PaymentPlan.Monthly,
     status: PlotStatus.Occupied,
-    homeowners: ["846516891"]
+    homeowners: ["846516891", "846516895"]
   },
   {
     id: "12346",
@@ -86,6 +86,14 @@ let users: User[] = [
     lastName: "Test",
     ssoId: "auth0|62e43ac09ef7eff16baed140",
     id: "846516891",
+    role: Role.Homeowner
+  },
+  {
+    email: "callie.test@claytonhomes.com",
+    firstName: "Callie",
+    lastName: "Test",
+    ssoId: null,
+    id: "846516895",
     role: Role.Homeowner
   },
   {
@@ -145,7 +153,7 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
     
     // Add a simulated delay. Place the call to handleRoute() inside the observable chain, because
     // the Auth0 interceptor relies on the observable not being subscribed to. Otherwise, there are duplicate calls.
-    return timer(500).pipe(
+    return timer(250).pipe(
       concatMap(() => {
         console.log("Intercepting request to " + url, request);
         return handleRoute();
@@ -223,14 +231,44 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       if (params.get("userId")) {
         // TODO Authorize the user to this ID
         const userId = params.get("userId");
-        return ok(plots.filter(x => x.homeowners.find(y => y === userId)));
+        return ok(
+          plots.filter(x =>
+            x.homeowners.find(y => y === userId)
+          ).map(plot => ({
+            ...plot,
+            accountBalance: calculatePlotBalance(plot.id!),
+            homeowners: plot.homeowners.map(id =>
+              getUser(id)
+            )
+          }))
+        );
       }
       else {
         // TODO Authorize the user can retrieve all plots
-        return ok([
-          ...plots
-        ]);
+        return ok(plots.map(plot => ({
+          ...plot,
+          accountBalance: calculatePlotBalance(plot.id!),
+          homeowners: plot.homeowners.map(id =>
+            getUser(id)
+          )
+        })));
       }
+    }
+
+    function calculatePlotBalance(plotId: string) {
+      // Sum all transactions for the plot
+      return transactions.reduce((sum, transaction) => {
+        if (transaction.plotId === plotId)
+          return transaction.type === TransactionType.Credit ?
+            sum + transaction.amount
+            : sum - transaction.amount;
+        else
+          return sum;
+      }, 0);
+    }
+
+    function getUser(id: string) {
+      return users.find(x => x.id === id) || null;
     }
 
     function createPlot(): Observable<HttpEvent<unknown>> {
@@ -269,6 +307,7 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
     function createTransaction(): Observable<HttpEvent<unknown>> {
       const tran = <Transaction>body;
       const plotId = params.get("plotId")!;
+      console.log("Creating transaction", tran, plotId);
       // TODO authorize the user to this plot
       // TOOD ensure UserId is the same as token userId
       const newDataTran: DataTransaction = {
@@ -281,6 +320,7 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         ...transactions,
         newDataTran
       ];
+      saveSession();
       // HACK because the field names are the same, we can return the data object directly
       return ok(newDataTran);
     }

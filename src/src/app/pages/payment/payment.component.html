@@ -1,0 +1,38 @@
+<app-toolbar></app-toolbar>
+<div class="container">
+    <h1>Hi, {{ (user$ | async)!.firstName }}</h1>
+    <ng-container *ngIf="!(isLoading$ | async) else loading">
+        <ng-container *ngIf="plot$ | async as plot">
+            <form [formGroup]="form" (submit)="onSubmit()">
+                <h2>{{plot.street}}</h2>
+        
+                <div class="col-sm-6">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Payment Amount</mat-label>
+                        <select matNativeControl required formControlName="amountType">
+                            <option [value]="amountType.CurrentBalance">Current Balance ( {{ getAdjustedAccountBalance(plot.accountBalance) | currency }} )</option>
+                            <option [value]="amountType.Other">Other Amount</option>
+                        </select>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-sm-3" *ngIf="isCustomAmount">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Custom Amount</mat-label>
+                        <input matInput prefix="$ " mask="separator.2" thousandSeparator="," formControlName="amount" />
+                    </mat-form-field>
+                </div>
+
+                <app-credit-card-input formControlName="creditCard"></app-credit-card-input>
+
+                <button mat-raised-button color="primary" type="submit" class="me-2" [disabled]="!form.valid || isSubmitting">Submit</button>
+                <button mat-raised-button (click)="onCancel()">Cancel</button>
+                <app-loading *ngIf="isSubmitting"></app-loading>
+            </form>
+        </ng-container>
+    </ng-container>
+</div>
+
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>

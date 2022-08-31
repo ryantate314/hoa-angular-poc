@@ -1,0 +1,32 @@
+<form [formGroup]="form">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <mat-form-field appearance="fill">
+                    <mat-label>Credit Card Number</mat-label>
+                    <input matInput required mask="0000-0000-0000-0000" formControlName="cardNumber" />
+                    <span matSuffix *ngIf="!cardNumberInput.errors?.['card-validation']">
+                        <fa-icon [icon]="faCircleCheck" class="valid-icon" title="Valid Credit Card Number"></fa-icon>
+                    </span>
+                </mat-form-field>
+            </div>
+
+            <div class="mb-3 row">
+                <div class="col-sm-6">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Expiration</mat-label>
+                        <input matInput required placeholder="Ex. 01/25" mask="00/00" formControlName="expiration" />
+                    </mat-form-field>
+                </div>
+
+                <div class="col-sm-6">
+                    <mat-form-field appearance="fill">
+                        <mat-label>CVV</mat-label>
+                        <input matInput required formControlName="verificationCode" mask="000" />
+                    </mat-form-field>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
