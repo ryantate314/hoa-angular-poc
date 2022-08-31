@@ -1,0 +1,16 @@
+<ng-container *ngIf="!(userLoading$ | async); else loading">
+    <ng-container *ngIf="!(isAuthenticated$ | async)">
+        <div class="login-container">
+            <h1>Welcome to Vanderbilt HOA</h1>
+            <p>Log in or create an account to access the Portal.</p>
+            <div class="d-flex justify-content-center">
+                <button mat-raised-button color="primary" class="me-2" (click)="login()">Log In</button>
+                <button mat-raised-button color="accent" (click)="login()">Create Account</button>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>
+
+<ng-template #loading>
+    <p>Loading...</p>
+</ng-template>

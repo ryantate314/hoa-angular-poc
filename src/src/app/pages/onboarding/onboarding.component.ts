@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { AppState } from '../store/app-state';
-import { getUserLoading } from '../store/user';
+import { AppState } from '../../store/app-state';
+import { getUserLoading } from '@app/store/user';
 
 @Component({
   selector: 'app-onboarding',
