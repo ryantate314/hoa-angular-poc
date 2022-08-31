@@ -9,6 +9,7 @@ export interface Plot {
     status: PlotStatus;
     paymentPlan: PaymentPlan;
     homeowners: User[];
+    accountBalance: number;
 }
 
 export enum PlotStatus {

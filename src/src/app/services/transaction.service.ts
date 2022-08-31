@@ -37,6 +37,11 @@ export class TransactionService {
           plotId: plotId
         }
       }
+    ).pipe(
+      map(transaction => ({
+        ...transaction,
+        date: new Date(transaction.date)
+      }))
     );
   }
 }
