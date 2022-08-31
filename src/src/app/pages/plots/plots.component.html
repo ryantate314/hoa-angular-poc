@@ -2,18 +2,30 @@
 <div class="container">
     <ng-container *ngIf="!(isLoading$ | async) else loading">
         <h1>Hi, Ryan</h1>
-        <h3>Your Plots</h3>
-        <a [routerLink]="[plot.id]" class="plot-link" *ngFor="let plot of plots$ | async">
-            <mat-card>
-                <mat-card-title>
-                    <div class="d-flex">
-                        <span>{{plot.street}}</span>
-                        <span style="flex: 1 1 auto;"></span>
-                        <span>$0.00</span>
-                    </div>
-                </mat-card-title>
-            </mat-card>
-        </a>
+        <div class="row">
+            <div class="col-md-9">
+                <h3>Your Plots</h3>
+                <a [routerLink]="[plot.id]" class="plot-link" *ngFor="let plot of plots$ | async">
+                    <mat-card>
+                        <mat-card-title>
+                            <div class="d-flex">
+                                <span>{{plot.street}}</span>
+                                <span style="flex: 1 1 auto;"></span>
+                                <span>$0.00</span>
+                            </div>
+                        </mat-card-title>
+                    </mat-card>
+                </a>
+            </div>
+            <div class="col-md-3 mt-3 mt-md-0">
+                <h3>Community Events</h3>
+                <mat-card *ngFor="let event of events$ | async">
+                    <mat-card-title>{{ event.name }}</mat-card-title>
+                    <mat-card-subtitle>{{ event.startDate | date: 'short' }} - {{ event.endDate | date: 'shortTime' }}</mat-card-subtitle>
+                </mat-card>
+                <p *ngIf="(events$ | async)?.length == 0">There are currently no scheduled events.</p>
+            </div>
+        </div>
     </ng-container>
 </div>
 
