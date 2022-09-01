@@ -58,8 +58,12 @@ export class PlotDetailsComponent implements OnInit, OnDestroy {
       map(plot => plot!)
     );
 
-    // TODO add transactions in loading check
-    this.isLoading$ = this.store$.select(fromPlot.arePlotsLoading);
+    this.isLoading$ = combineLatest([
+      this.store$.select(fromPlot.arePlotsLoading),
+      this.store$.select(fromTransaction.getIsLoading)
+    ]).pipe(
+      map(isLoading => isLoading.some(x => x))
+    );
 
     this.transactions$ = this.store$.select(fromTransaction.selectAll);
 

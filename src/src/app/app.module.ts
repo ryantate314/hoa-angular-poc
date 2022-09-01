@@ -40,6 +40,7 @@ import { CreditCardInputComponent } from './components/credit-card-input/credit-
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxMaskModule } from 'ngx-mask';
+import { EventComponent } from './pages/event/event.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { NgxMaskModule } from 'ngx-mask';
     PlotDetailsComponent,
     PaymentComponent,
     LoadingComponent,
-    CreditCardInputComponent
+    CreditCardInputComponent,
+    EventComponent
   ],
   imports: [
     BrowserModule,
