@@ -17,12 +17,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
+import { TransactionsComponent } from './pages/transactions/transactions.component';
+import { SharedModule } from '@app/shared/shared.module';
+import { NgxMaskModule } from 'ngx-mask';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
     HomeComponent,
     AdminComponent,
-    PlotsComponent
+    PlotsComponent,
+    TransactionsComponent,
   ],
   imports: [
     CommonModule,
@@ -30,6 +35,7 @@ import { MatCardModule } from '@angular/material/card';
     MatToolbarModule,
     MatButtonModule,
     MatTableModule,
+    MatSortModule,
     FormsModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -38,7 +44,9 @@ import { MatCardModule } from '@angular/material/card';
     ReactiveFormsModule,
     MatIconModule,
     MatAutocompleteModule,
-    MatCardModule
+    MatCardModule,
+    SharedModule,
+    NgxMaskModule.forChild()
   ]
 })
 export class AdminModule { }
