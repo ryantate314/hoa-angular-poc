@@ -38,4 +38,12 @@ export class AuthService {
   public getCurrentUser(): Observable<User> {
     return this.http.post<User>(`${environment.apiUrl}/users/login`, null);
   }
+
+  public getUsers(userId?: string): Observable<User[]> {
+    return this.http.get<User[]>(`${environment.apiUrl}/users`, {
+      params: {
+        userId: userId ?? ""
+      }
+    });
+  }
 }

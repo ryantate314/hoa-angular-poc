@@ -172,6 +172,8 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
 
       if (url.endsWith('/api/v1/users/login') && method == "POST")
         return login();
+      else if (url.includes('/api/v1/users') && method === "GET")
+        return getUsers();
       else if (url.includes('/api/v1/plots') && method === "GET")
         return getPlots();
       else if (url.endsWith('api/v1/plots') && method === "POST")
@@ -269,6 +271,12 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
 
     function getUser(id: string) {
       return users.find(x => x.id === id) || null;
+    }
+
+    function getUsers(): Observable<HttpEvent<unknown>>{
+      return ok(users.map(user => ({
+        ...user
+      })));
     }
 
     function createPlot(): Observable<HttpEvent<unknown>> {

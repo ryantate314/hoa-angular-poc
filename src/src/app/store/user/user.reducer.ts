@@ -3,7 +3,7 @@ import { createReducer, on } from "@ngrx/store";
 import { User } from "src/app/models/user.model";
 import * as actions from "./user.actions";
 
-export const FEATURE_NAME = "plot";
+export const FEATURE_NAME = "plot"; //?
 
 export enum UserStatus {
     INITIAL,
@@ -41,5 +41,20 @@ export const userReducer = createReducer<UserState>(initialState,
         ...state,
         currentUser: null,
         currentUserStatus: UserStatus.NOT_FOUND
-    }))
+    })),
+    on(actions.loadUsers, state => ({
+        ...state,
+        status: UserStatus.LOADING
+    })),
+    on(actions.loadUsersSuccess, (state, action) => {
+        const newState = adapter.setAll(action.users, state);
+        return {
+            ...newState,
+            status: UserStatus.FOUND
+        };
+    }),
+    on(actions.loadUsersFailure, state => ({
+        ...state,
+        status: UserStatus.Error
+    })),
 );

@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { Action, createReducer, on } from '@ngrx/store';
 import { Plot } from 'src/app/models/plot.model';
-import { loadPlots, loadPlotsFailure, loadPlotsSuccess } from "./plot.actions";
+import { loadPlots, loadPlotsFailure, loadPlotsSuccess, createPlotSuccess, createPlotFailure } from "./plot.actions";
 
 export const FEATURE_NAME = "plot";
 
@@ -46,5 +46,16 @@ export const plotReducer = createReducer<PlotState>(initialState,
     on(loadPlotsFailure, state => ({
         ...state,
         status: PlotStatus.Failed
-    }))
+    })),
+    on(createPlotSuccess, (state, action) => {
+        const newState = entityAdapter.addOne(action.plot, state);
+        return {
+            ...newState,
+            status: PlotStatus.Loaded
+        };
+    }),
+    on(createPlotFailure, state => ({
+        ...state,
+        status: PlotStatus.Failed
+    })),
 );
