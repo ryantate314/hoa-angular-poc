@@ -102,7 +102,7 @@ let users: User[] = [
     lastName: "Test",
     ssoId: null,
     id: "8465168asdfasdf",
-    role: Role.Homeowner
+    role: Role.Admin
   }
 ];
 

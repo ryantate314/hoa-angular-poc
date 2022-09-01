@@ -1,92 +1,107 @@
 <div class="container">
     <h1>Hi, {{(user$ | async)?.firstName}}</h1>
-
     <div class="container">
         <div class="row">
-            <h2>Add A Plot</h2> 
-            <hr>
-            <h4>Address</h4>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field appearance="fill">
-                    <mat-label>Street</mat-label>
-                    <input matInput #input placeholder="Ex. 123 Test St">
-                </mat-form-field>
+            <div class="col-2">
+                <h1>Plots</h1>
             </div>
             <div class="col">
-                <mat-form-field appearance="fill">
-                    <mat-label>City</mat-label>
-                    <input matInput #input placeholder="Chicago">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field appearance="fill">
-                    <mat-label>State</mat-label>
-                    <input matInput #input placeholder="Illinois">
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field appearance="fill">
-                    <mat-label>Zip Code</mat-label>
-                    <input matInput #input placeholder="60066">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field appearance="fill">
-                    <mat-label>Status</mat-label>
-                    <mat-select>
-                        <mat-option value="Occupied">Occupied</mat-option>
-                        <mat-option value="Vacant">Vacant</mat-option>
-                        <mat-option value="ForSale">For Sale</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field appearance="fill">
-                    <mat-label>Payment Plan</mat-label>
-                    <mat-select>
-                        <mat-option value="Monthly">Monthly</mat-option>
-                        <mat-option value="Yearly">Yearly</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col owners-chip-list">
-                <mat-form-field appearance="fill">
-                    <mat-label>Owners</mat-label>
-                    <mat-chip-list #chipList aria-label="Owner selection">
-                      <mat-chip
-                        *ngFor="let owner of owners"
-                        (removed)="remove(owner)">
-                        {{owner}}
-                        <button matChipRemove>
-                          <mat-icon>cancel</mat-icon>
-                        </button>
-                      </mat-chip>
-                      <input
-                        placeholder="New owner..."
-                        #ownerInput
-                        [formControl]="ownerCtrl"
-                        [matAutocomplete]="auto"
-                        [matChipInputFor]="chipList"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                        (matChipInputTokenEnd)="add($event)">
-                    </mat-chip-list>
-                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-                      <mat-option *ngFor="let owner of filteredOwners | async" [value]="owner">
-                        {{owner}}
-                      </mat-option>
-                    </mat-autocomplete>
-                </mat-form-field>
+                <button color="primary" mat-icon-button><mat-icon style="size:10em;" fontIcon="add_circle"></mat-icon></button>
             </div>
         </div>
     </div>
 
-    <h1>Plots</h1>
+    <mat-card>
+        <mat-card-title>Add a Plot</mat-card-title>
+        <mat-card-subtitle>Enter the address, payment plan, vacancy status, and signed owners of the property (if applicable).</mat-card-subtitle>
+        <hr>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Street</mat-label>
+                        <input matInput #input placeholder="Ex. 123 Test St">
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                        <mat-label>City</mat-label>
+                        <input matInput #input placeholder="Chicago">
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                        <mat-label>State</mat-label>
+                        <input matInput #input placeholder="Illinois">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Zip Code</mat-label>
+                        <input matInput #input placeholder="60066">
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Status</mat-label>
+                        <mat-select>
+                            <mat-option value="Occupied">Occupied</mat-option>
+                            <mat-option value="Vacant">Vacant</mat-option>
+                            <mat-option value="ForSale">For Sale</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Payment Plan</mat-label>
+                        <mat-select>
+                            <mat-option value="Monthly">Monthly</mat-option>
+                            <mat-option value="Yearly">Yearly</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Owners</mat-label>
+                        <mat-chip-list #chipList aria-label="Owner selection">
+                        <mat-chip
+                            *ngFor="let owner of owners"
+                            (removed)="remove(owner)">
+                            {{owner}}
+                            <button matChipRemove>
+                            <mat-icon>cancel</mat-icon>
+                            </button>
+                        </mat-chip>
+                        <input
+                            placeholder="New owner..."
+                            #ownerInput
+                            [formControl]="ownerCtrl"
+                            [matAutocomplete]="auto"
+                            [matChipInputFor]="chipList"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            (matChipInputTokenEnd)="add($event)">
+                        </mat-chip-list>
+                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                        <mat-option *ngFor="let owner of filteredOwners | async" [value]="owner">
+                            {{owner}}
+                        </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <mat-card-actions>
+            <button color="primary" mat-raised-button>SAVE</button>
+            <button color="warn" mat-stroked-button>CANCEL</button>
+        </mat-card-actions>
+    </mat-card>
+    
+    <br>
+    
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
         <ng-container matColumnDef="address">
