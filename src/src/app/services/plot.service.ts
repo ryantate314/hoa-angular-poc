@@ -11,10 +11,10 @@ export class PlotService {
 
   constructor(private http: HttpClient) { }
 
-  public getPlots(userId: string): Observable<Plot[]> {
+  public getPlots(userId?: string): Observable<Plot[]> {
     return this.http.get<Plot[]>(`${environment.apiUrl}/plots`, {
       params: {
-        userId: userId
+        userId: userId ?? ''
       }
     });
   }

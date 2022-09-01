@@ -86,7 +86,7 @@ let users: User[] = [
     lastName: "Test",
     ssoId: "auth0|62e43ac09ef7eff16baed140",
     id: "846516891",
-    role: Role.Homeowner
+    role: Role.Admin
   },
   {
     email: "callie.test@claytonhomes.com",
@@ -234,24 +234,12 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         return ok(
           plots.filter(x =>
             x.homeowners.find(y => y === userId)
-          ).map(plot => ({
-            ...plot,
-            accountBalance: calculatePlotBalance(plot.id!),
-            homeowners: plot.homeowners.map(id =>
-              getUser(id)
-            )
-          }))
+          ).map(plot => _convertDataPlotToPlot(plot))
         );
       }
       else {
         // TODO Authorize the user can retrieve all plots
-        return ok(plots.map(plot => ({
-          ...plot,
-          accountBalance: calculatePlotBalance(plot.id!),
-          homeowners: plot.homeowners.map(id =>
-            getUser(id)
-          )
-        })));
+        return ok(plots.map(plot => _convertDataPlotToPlot(plot)));
       }
     }
 
@@ -283,7 +271,7 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         newPlot
       ];
       saveSession();
-      return ok(newPlot);
+      return ok(_convertDataPlotToPlot(newPlot));
     }
 
     function getEvents(): Observable<HttpEvent<unknown>> {
@@ -294,13 +282,17 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
 
     function getTransactions(): Observable<HttpEvent<unknown>> {
       const plotId = params.get("plotId");
-      // TOOD authorize the user to this plot
+      let filteredTransactions: DataTransaction[] = [];
+      if (plotId) {
+        // TODO authorize the user to this plot
+        filteredTransactions = transactions.filter(x => x.plotId == plotId)
+      }
+      else {
+        // TODO authorize the user can retrieve all transactions
+        filteredTransactions = transactions;
+      }
       return ok(
-        transactions.filter(x => x.plotId == plotId)
-          // HACK because the field names are the same, we can return the data object directly
-          .map(trans => ({
-            ...trans,
-          }))
+        filteredTransactions.map(tran => _convertDataTranToTran(tran))
       );
     }
 
@@ -311,18 +303,42 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       // TODO authorize the user to this plot
       // TOOD ensure UserId is the same as token userId
       const newDataTran: DataTransaction = {
-        ...tran,
         id: newId(),
         plotId: plotId,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        amount: tran.amount,
+        description: tran.description,
+        type: tran.type,
+        userId: tran.userId,
       };
       transactions = [
         ...transactions,
         newDataTran
       ];
       saveSession();
-      // HACK because the field names are the same, we can return the data object directly
-      return ok(newDataTran);
+      return ok(_convertDataTranToTran(newDataTran));
+    }
+
+    function _convertDataPlotToPlot(plot: DataPlot): Plot {
+      return {
+        ...plot,
+        homeowners: users.filter(user => plot.homeowners.includes(user.id!)),
+        accountBalance: calculatePlotBalance(plot.id!)
+      };
+    }
+
+    function _convertDataTranToTran(tran: DataTransaction): Transaction {
+      const plot = plots.find(plot => plot.id === tran.plotId);
+      return {
+        ...tran,
+        plot: plot ? {
+          ...plot,
+          accountBalance: calculatePlotBalance(plot.id!),
+          homeowners: users.filter(user => plots)
+        } : undefined,
+        user: getUser(tran.userId!)!,
+        date: tran.date as unknown as Date
+      };
     }
 
     function ok(body: any = null) {

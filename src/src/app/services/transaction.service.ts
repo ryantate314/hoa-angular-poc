@@ -11,12 +11,12 @@ export class TransactionService {
 
   constructor(private http: HttpClient) { }
 
-  public getTransactions(plotId: string): Observable<Transaction[]> {
+  public getTransactions(plotId?: string): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(
       `${environment.apiUrl}/transactions`,
       {
         params: {
-          plotId: plotId
+          plotId: plotId ?? ''
         }
       }
     ).pipe(
@@ -28,7 +28,7 @@ export class TransactionService {
     );
   }
 
-  public createTransaction(plotId: string, transaction: Transaction): Observable<Transaction> {
+  public createTransaction(transaction: Transaction, plotId: string): Observable<Transaction> {
     return this.http.post<Transaction>(
       `${environment.apiUrl}/transactions`,
       transaction,

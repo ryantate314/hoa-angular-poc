@@ -35,11 +35,11 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { PlotsComponent } from './pages/plots/plots.component';
 import { PlotDetailsComponent } from './pages/plot-details/plot-details.component';
 import { PaymentComponent } from './pages/payment/payment.component';
-import { LoadingComponent } from './components/loading/loading.component';
 import { CreditCardInputComponent } from './components/credit-card-input/credit-card-input.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxMaskModule } from 'ngx-mask';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +50,6 @@ import { NgxMaskModule } from 'ngx-mask';
     PlotsComponent,
     PlotDetailsComponent,
     PaymentComponent,
-    LoadingComponent,
     CreditCardInputComponent
   ],
   imports: [
@@ -60,6 +59,7 @@ import { NgxMaskModule } from 'ngx-mask';
     NgbModule,
     HttpClientModule,
     ReactiveFormsModule,
+    SharedModule,
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([
       PlotEffects,
