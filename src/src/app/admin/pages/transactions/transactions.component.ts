@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AppState } from '@app/store/app-state';
 import { Store } from '@ngrx/store';
 
@@ -9,16 +9,21 @@ import { Transaction, TransactionType } from '@app/models/transaction.model';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { Plot } from '@app/models/plot.model';
 import { Actions, ofType } from '@ngrx/effects';
+import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-transactions',
   templateUrl: './transactions.component.html',
   styleUrls: ['./transactions.component.scss']
 })
-export class TransactionsComponent implements OnInit, OnDestroy {
+export class TransactionsComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  transactions$: Observable<Transaction[]>;
+  private dataSource: MatTableDataSource<Transaction>;
+  dataSource$: Observable<MatTableDataSource<Transaction>>;
   plots$: Observable<Plot[]>;
+
+  @ViewChild(MatSort) sort?: MatSort;
 
   isEditing: boolean = false;
   isSubmitting: boolean = false;
@@ -29,7 +34,25 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   filteredPlotOptions$: Observable<Plot[]>;
 
   constructor(private store$: Store<AppState>, private fb: FormBuilder, private actions$: Actions) {
-    this.transactions$ = this.store$.select(fromTransaction.selectAll);
+    this.dataSource = new MatTableDataSource<Transaction>();
+    this.dataSource.sortingDataAccessor = (data: Transaction, sortHeaderId) => {
+      switch(sortHeaderId) {
+        case 'date':
+          return data.date.getTime();
+        default:
+          return (data as any)[sortHeaderId];
+      }
+    };
+
+    this.dataSource$ = this.store$.select(fromTransaction.selectAll).pipe(
+      map(trans => {
+        this.dataSource.data = trans;
+        this.sort?.sort({ id: 'date', start: 'desc', disableClear: true });
+        this.dataSource.sort = this.sort!
+        return this.dataSource;
+      })
+    );
+
     this.plots$ = this.store$.select(fromPlot.selectAll);
 
     this.form = fb.group({
@@ -49,6 +72,10 @@ export class TransactionsComponent implements OnInit, OnDestroy {
       withLatestFrom(this.plots$),
       map(([searchTerm, plots]) => this.filterPlots(searchTerm, plots))
     );
+  }
+
+  ngAfterViewInit(): void {
+    console.log('after view init', this.sort);
   }
 
   private filterPlots(searchTerm: string, plots: Plot[]): Plot[] {

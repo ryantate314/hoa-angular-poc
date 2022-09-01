@@ -20,6 +20,7 @@ import { MatCardModule } from '@angular/material/card';
 import { TransactionsComponent } from './pages/transactions/transactions.component';
 import { SharedModule } from '@app/shared/shared.module';
 import { NgxMaskModule } from 'ngx-mask';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { NgxMaskModule } from 'ngx-mask';
     MatToolbarModule,
     MatButtonModule,
     MatTableModule,
+    MatSortModule,
     FormsModule,
     MatFormFieldModule,
     MatSelectModule,

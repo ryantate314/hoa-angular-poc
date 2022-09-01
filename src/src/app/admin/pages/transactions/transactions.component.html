@@ -10,7 +10,7 @@
 
 <div *ngIf="isEditing">
     <h3>Create a Transaction</h3>
-    
+
     <form [formGroup]="form" (submit)="onSubmit()">
 
         <div class="col-md-6">
@@ -63,10 +63,10 @@
     </form>
 </div>
 
-<ng-container *ngIf="transactions$ | async as transactions; else loading">
-    <table mat-table [dataSource]="(transactions$ | async)!">
+<ng-container *ngIf="dataSource$ | async as dataSource; else loading">
+    <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="date">
-            <th mat-header-cell *matHeaderCellDef> Date </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear start="desc"> Date </th>
             <td mat-cell *matCellDef="let trans"> {{ trans.date | date: 'short' }} </td>
         </ng-container>
 
