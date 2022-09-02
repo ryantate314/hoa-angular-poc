@@ -40,6 +40,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxMaskModule } from 'ngx-mask';
 import { SharedModule } from './shared/shared.module';
+import { EventComponent } from './pages/event/event.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,9 @@ import { SharedModule } from './shared/shared.module';
     PlotsComponent,
     PlotDetailsComponent,
     PaymentComponent,
-    CreditCardInputComponent
+    CreditCardInputComponent,
+    CreditCardInputComponent,
+    EventComponent
   ],
   imports: [
     BrowserModule,

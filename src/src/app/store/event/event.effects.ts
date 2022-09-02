@@ -19,4 +19,22 @@ export class EventEffects {
             ))
     ));
 
+    createEvent$ = createEffect(() => this.actions$.pipe(
+        ofType(fromEvent.createEvent),
+        switchMap(action => this.eventService.createEvent(action.event)
+            .pipe(
+                map(event => fromEvent.createEventSuccess({ event: event })),
+                catchError((error) => of(fromEvent.createEventFailure({ error: error })))
+            ))
+    ));
+
+    deleteEvent$ = createEffect(() => this.actions$.pipe(
+        ofType(fromEvent.deleteEvent),
+        switchMap(action => this.eventService.deleteEvent(action.eventId)
+            .pipe(
+                map(() => fromEvent.deleteEventSuccess({ eventId: action.eventId })),
+                catchError((error) => of(fromEvent.deleteEventFailure({ error: error })))
+            ))
+    ));
+
 }

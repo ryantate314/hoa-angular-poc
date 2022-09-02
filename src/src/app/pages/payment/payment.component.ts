@@ -110,7 +110,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         conditionalValidator(() =>
           this.isCustomAmount,
           Validators.required
-        )
+        ),
+        Validators.min(0.01)
       ]],
       'creditCard': [null]
     });

@@ -28,7 +28,9 @@ export class AuthService {
   }
 
   public logout() {
-    this.auth0.logout();
+    this.auth0.logout({
+      returnTo: window.location.origin
+    });
   }
 
   /**

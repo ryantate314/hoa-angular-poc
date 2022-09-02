@@ -1,31 +1,43 @@
 import { createEntityAdapter, EntityState } from "@ngrx/entity";
 import { createReducer, on } from "@ngrx/store";
 import { Event } from "src/app/models/event.model";
-import { loadEvents, loadEventsSuccess } from "./event.actions";
+import { createEventSuccess, deleteEventSuccess, loadEvents, loadEventsSuccess } from "./event.actions";
+
+export enum EventStatus {
+    Initial = "Initial",
+    Loading = "Loading",
+    Loaded = "Loaded"
+}
 
 export interface EventState extends EntityState<Event> {
-    isLoading: boolean | null
+    status: EventStatus
 }
 
 export const entityAdapter = createEntityAdapter<Event>({
-    selectId: x => x.id,
+    selectId: x => x.id!,
     sortComparer: (a, b) => a.startDate.getTime() - b.startDate.getTime()
 });
 
 const initialState = entityAdapter.getInitialState({
-    isLoading: null
+    status: EventStatus.Initial
 });
 
 export const eventReducer = createReducer<EventState>(initialState,
     on(loadEvents, (state) => ({
         ...state,
-        isLoading: true
+        status: EventStatus.Loading
     })),
     on(loadEventsSuccess, (state, action) => {
         const updatedState = entityAdapter.setAll(action.events, state);
         return {
             ...updatedState,
-            isLoading: false
+            status: EventStatus.Loaded
         };
-    })
+    }),
+    on(createEventSuccess, (state, action) => 
+        entityAdapter.addOne(action.event, state)
+    ),
+    on(deleteEventSuccess, (state, action) =>
+        entityAdapter.removeOne(action.eventId, state)
+    )
 );

@@ -1,10 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { AdminRoutingModule } from './admin-routing.module';
 import { HomeComponent } from './pages/home/home.component';
 import { AdminComponent } from './admin.component';
-
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { PlotsComponent } from './pages/plots/plots.component';
@@ -17,11 +15,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { TransactionsComponent } from './pages/transactions/transactions.component';
 import { SharedModule } from '@app/shared/shared.module';
 import { NgxMaskModule } from 'ngx-mask';
 import { MatSortModule } from '@angular/material/sort';
 import { UsersComponent } from './pages/users/users.component';
+import { EventsComponent } from './pages/events/events.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,7 @@ import { UsersComponent } from './pages/users/users.component';
     PlotsComponent,
     TransactionsComponent,
     UsersComponent,
+    EventsComponent,
   ],
   imports: [
     CommonModule,
@@ -47,6 +50,10 @@ import { UsersComponent } from './pages/users/users.component';
     MatIconModule,
     MatAutocompleteModule,
     MatCardModule,
+    MatDatepickerModule,
+    MatProgressSpinnerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
     SharedModule,
     NgxMaskModule.forChild()
   ]

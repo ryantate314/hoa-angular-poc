@@ -5,11 +5,14 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "aws s3 sync --delete dist/cmh.vmf.poc.hoa-angular s3://sandbox-vmf-angularpoc"
   },
   "private": true,
   "dependencies": {
+    "@angular-material-components/datetime-picker": "^8.0.0",
     "@angular/animations": "^14.1.0",
     "@angular/cdk": "^14.2.0",
     "@angular/common": "^14.1.0",

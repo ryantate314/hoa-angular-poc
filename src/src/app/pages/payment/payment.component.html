@@ -1,6 +1,6 @@
 <app-toolbar></app-toolbar>
 <div class="container">
-    <h1>Hi, {{ (user$ | async)!.firstName }}</h1>
+    <h1 class="mb-3">Hi, {{ (user$ | async)!.firstName }}</h1>
     <ng-container *ngIf="!(isLoading$ | async) else loading">
         <ng-container *ngIf="plot$ | async as plot">
             <form [formGroup]="form" (submit)="onSubmit()">
