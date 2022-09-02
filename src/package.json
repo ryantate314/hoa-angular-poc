@@ -5,8 +5,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "aws s3 sync --delete dist/cmh.vmf.poc.hoa-angular s3://sandbox-vmf-angularpoc"
   },
   "private": true,
   "dependencies": {
