@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 .toolbar-spacer {
     flex: 1 1 auto;
 }
@@ -10,4 +12,9 @@ a {
     text-decoration: none;
     color: white;
     padding-bottom: 0.2em;
+
+    i {
+        /* TODO use Angular Material themeing instead of bootstrap text-secondary */
+        color: #26be72;
+    }
 }
