@@ -30,7 +30,7 @@
                     <h3 id="transactions">Payments and Fees</h3>
                 </div>
                 <div class="col-md-2">
-                    <button mat-raised-button color="primary" [routerLink]="['payment']">Make Payment</button>
+                    <button mat-raised-button color="accent" [routerLink]="['payment']">Make Payment</button>
                 </div>
             </div><!-- /.row -->
                 
@@ -52,7 +52,12 @@
 
                 <ng-container matColumnDef="amount">
                     <th mat-header-cell *matHeaderCellDef> Amount </th>
-                    <td mat-cell *matCellDef="let trans"> {{ trans.amount | currency }} </td>
+                    <td mat-cell *matCellDef="let trans">
+                        <span [class.text-danger]="trans.type == transType.Debit"
+                              [class.text-success]="trans.type == transType.Credit">
+                              {{ trans.amount | currency }}
+                        </span>
+                    </td>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="['date', 'type', 'description', 'amount']"></tr>

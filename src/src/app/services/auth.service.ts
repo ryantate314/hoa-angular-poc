@@ -28,7 +28,9 @@ export class AuthService {
   }
 
   public logout() {
-    this.auth0.logout();
+    this.auth0.logout({
+      returnTo: window.location.origin
+    });
   }
 
   /**
@@ -37,5 +39,23 @@ export class AuthService {
    */
   public getCurrentUser(): Observable<User> {
     return this.http.post<User>(`${environment.apiUrl}/users/login`, null);
+  }
+
+  public getUsers(userId?: string): Observable<User[]> {
+    return this.http.get<User[]>(`${environment.apiUrl}/users`, {
+      params: {
+        userId: userId ?? ""
+      }
+    });
+  }
+
+  public createUser(user: User):  Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/users`, user);
+  }
+
+  public deleteUser(id: string): Observable<void> {
+    return this.http.delete<void>(
+      `${environment.apiUrl}/users/${id}`
+    );
   }
 }

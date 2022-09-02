@@ -8,6 +8,7 @@
                     <span matSuffix *ngIf="!cardNumberInput.errors?.['card-validation']">
                         <fa-icon [icon]="faCircleCheck" class="valid-icon" title="Valid Credit Card Number"></fa-icon>
                     </span>
+                    <mat-hint *ngIf="cardNumberInput.valid">{{cardType}}</mat-hint>
                 </mat-form-field>
             </div>
 

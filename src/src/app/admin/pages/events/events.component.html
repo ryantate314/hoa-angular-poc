@@ -1,0 +1,103 @@
+<div class="d-flex">
+    <h1>Community Events</h1>
+    <span class="flex-spacer"></span>
+    <div *ngIf="!isEditing">
+        <button mat-fab (click)="onEditClick()">
+            <mat-icon fontIcon="add_circle"></mat-icon>
+        </button>
+    </div>
+</div>
+
+<mat-card *ngIf="isEditing">
+    <h3>Create an Event</h3>
+
+    <form [formGroup]="form" (submit)="onSubmit()">
+        <div class="col-md-4">
+            <mat-form-field appearance="fill">
+                <mat-label>Name</mat-label>
+                <input matInput required formControlName="name">
+            </mat-form-field>
+        </div>
+
+        <div class="row align-items-center">
+            <div class="col-md-4 col-lg-3">
+                <mat-form-field>
+                    <mat-label>Start Date</mat-label>
+                    <input matInput [ngxMatDatetimePicker]="eventStartPicker" placeholder="Choose a date" formControlName="eventStart"
+                        [min]="minDate" required>
+                    <mat-datepicker-toggle matSuffix [for]="$any(eventStartPicker)"></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker #eventStartPicker [showSeconds]="false"
+                        [stepMinute]="30" >
+                    </ngx-mat-datetime-picker>
+                </mat-form-field>
+            </div>
+            <div class="col-md-1 d-none d-md-block text-center">
+                <mat-icon fontIcon="remove"></mat-icon>
+            </div>
+            <div class="col-md-4 col-lg-3">
+                <mat-form-field>
+                    <mat-label>End Date</mat-label>
+                    <input matInput [ngxMatDatetimePicker]="eventEndPicker" placeholder="Choose a date" formControlName="eventEnd"
+                        [min]="minDate" required>
+                    <mat-datepicker-toggle matSuffix [for]="$any(eventEndPicker)"></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker #eventEndPicker [showSeconds]="false"
+                        [stepMinute]="30" >
+                    </ngx-mat-datetime-picker>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <mat-form-field appearance="fill">
+                <mat-label>Location</mat-label>
+                <input matInput required formControlName="location">
+            </mat-form-field>
+        </div>
+
+        <div class="col-md-12">
+            <mat-form-field appearance="fill">
+                <mat-label>Description</mat-label>
+                <textarea matInput required formControlName="description"></textarea>
+            </mat-form-field>
+        </div>
+
+        <div class="col-md-12">
+            <mat-form-field appearance="fill">
+                <mat-label>Image URL</mat-label>
+                <input matInput formControlName="imageUrl">
+            </mat-form-field>
+        </div>
+
+        <div>
+            <button mat-raised-button color="primary" type="submit" class="me-3" [disabled]="isSubmitting">Submit</button>
+            <button mat-stroked-button color="warn" (click)="form.reset(); isEditing = false">Cancel</button>
+        </div>
+        <app-loading *ngIf="isSubmitting" class="d-block mt-3"></app-loading>
+    </form>
+</mat-card>
+
+<div *ngIf="events$ | async as events; else loading" class="mt-4 row justify-content-center">
+    <div class="col-md-6">
+        <mat-card *ngFor="let event of events" class="mb-3 mat-elevation-z8">
+            <div class="d-flex">
+                <mat-card-title class="mb-3">{{ event.name }} @ {{ event.location }}</mat-card-title>
+                <div class="flex-spacer"></div>
+                <button mat-icon-button title="Delete Event" color="warn" (click)="delete(event)" *ngIf="!isDeleting(event)">
+                    <mat-icon fontIcon="delete"></mat-icon>
+                </button>
+                <mat-spinner *ngIf="isDeleting(event)" [diameter]="30"></mat-spinner>
+            </div>
+            <mat-card-subtitle>{{ event.startDate | date: 'short' }} - {{ event.endDate | date: 'shortTime' }}</mat-card-subtitle>
+            
+            <div *ngIf="event.imageUrl" class="image-container mb-3">
+                <img [src]="event.imageUrl" />
+            </div>
+            <p>{{ event.description }}</p>
+        </mat-card>
+        <p *ngIf="events.length == 0">There are currently no scheduled events.</p>
+    </div>
+</div>
+
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>

@@ -8,8 +8,8 @@ import { OnboardingComponent } from './pages/onboarding/onboarding.component';
 import { PaymentComponent } from './pages/payment/payment.component';
 import { PlotDetailsComponent } from './pages/plot-details/plot-details.component';
 import { PlotsComponent } from './pages/plots/plots.component';
+import { PlotsResolver } from '@app/resolvers/plots.resolver';
 import { EventsResolver } from './resolvers/events.resolver';
-import { PlotsResolver } from './resolvers/plots.resolver';
 
 const routes: Routes = [
   { path: "home", component: HomeComponent, canActivate: [ LoginGuard ] },

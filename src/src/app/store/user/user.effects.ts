@@ -1,11 +1,12 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { faPersonMilitaryPointing } from "@fortawesome/free-solid-svg-icons";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from "rxjs/operators";
 import { AuthService } from "src/app/services/auth.service";
 import * as fromUser from "src/app/store/user";
-import { loadUserFailure, loadUserSuccess, userNotFound } from "src/app/store/user";
+import { loadUserFailure, loadUsersFailure, loadUsersSuccess, loadUserSuccess, userNotFound, createUserFailure, createUserSuccess} from "src/app/store/user";
 
 @Injectable()
 export class UserEffects {
@@ -27,6 +28,38 @@ export class UserEffects {
             );
         }
         )
+    ));
+
+    loadUsers$ = createEffect(() => this.actions$.pipe(
+        ofType(fromUser.loadUsers),
+        switchMap(_ => {
+            return this.authService.getUsers().pipe(
+                map(users => loadUsersSuccess({ users: users })),
+                catchError((err: HttpErrorResponse) => {
+                    console.log(err);
+                    return of(loadUsersFailure(err))
+                })
+            );
+        }
+        )
+    ));
+
+    createUser$ = createEffect(() => this.actions$.pipe(
+        ofType(fromUser.createUser),
+        switchMap(action => this.authService.createUser(action.user)
+            .pipe(
+                map(user => fromUser.createUserSuccess({ user: user })),
+                catchError((error) => of(fromUser.createUserFailure({ error: error })))
+            ))
+    ));
+
+    deleteUser$ = createEffect(() => this.actions$.pipe(
+        ofType(fromUser.deleteUser),
+        switchMap(action => this.authService.deleteUser(action.id)
+            .pipe(
+                map(() => fromUser.deleteUserSuccess({ id: action.id })),
+                catchError((error) => of(fromUser.deleteUserFailure({ error: error })))
+            ))
     ));
 
 }

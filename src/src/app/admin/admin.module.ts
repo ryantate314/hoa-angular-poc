@@ -1,10 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { AdminRoutingModule } from './admin-routing.module';
 import { HomeComponent } from './pages/home/home.component';
 import { AdminComponent } from './admin.component';
-
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { PlotsComponent } from './pages/plots/plots.component';
@@ -16,12 +14,28 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatCardModule } from '@angular/material/card';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+import { TransactionsComponent } from './pages/transactions/transactions.component';
+import { SharedModule } from '@app/shared/shared.module';
+import { NgxMaskModule } from 'ngx-mask';
+import { MatSortModule } from '@angular/material/sort';
+import { UsersComponent, UsersDeleteDialog } from './pages/users/users.component';
+import { EventsComponent } from './pages/events/events.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 @NgModule({
   declarations: [
     HomeComponent,
     AdminComponent,
-    PlotsComponent
+    PlotsComponent,
+    TransactionsComponent,
+    UsersComponent,
+    EventsComponent,
+    UsersDeleteDialog
   ],
   imports: [
     CommonModule,
@@ -29,6 +43,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatToolbarModule,
     MatButtonModule,
     MatTableModule,
+    MatSortModule,
     FormsModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -36,7 +51,15 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatInputModule,
     ReactiveFormsModule,
     MatIconModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatCardModule,
+    MatDatepickerModule,
+    MatProgressSpinnerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    SharedModule,
+    NgxMaskModule.forChild(),
+    MatDialogModule
   ]
 })
 export class AdminModule { }

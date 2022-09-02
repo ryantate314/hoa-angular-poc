@@ -3,7 +3,7 @@ import { createReducer, on } from "@ngrx/store";
 import { User } from "src/app/models/user.model";
 import * as actions from "./user.actions";
 
-export const FEATURE_NAME = "plot";
+export const FEATURE_NAME = "plot"; 
 
 export enum UserStatus {
     INITIAL,
@@ -15,7 +15,8 @@ export enum UserStatus {
 
 export interface UserState extends EntityState<User> {
     currentUser: User | null,
-    currentUserStatus: UserStatus
+    currentUserStatus: UserStatus,
+    status: UserStatus
 }
 
 export const adapter = createEntityAdapter<User>({
@@ -24,7 +25,8 @@ export const adapter = createEntityAdapter<User>({
 
 const initialState = adapter.getInitialState({
     currentUser: null,
-    currentUserStatus: UserStatus.INITIAL
+    currentUserStatus: UserStatus.INITIAL,
+    status: UserStatus.INITIAL
 });
 
 export const userReducer = createReducer<UserState>(initialState,
@@ -41,5 +43,32 @@ export const userReducer = createReducer<UserState>(initialState,
         ...state,
         currentUser: null,
         currentUserStatus: UserStatus.NOT_FOUND
-    }))
+    })),
+    on(actions.loadUsers, state => ({
+        ...state,
+        status: UserStatus.LOADING
+    })),
+    on(actions.loadUsersSuccess, (state, action) => {
+        const newState = adapter.setAll(action.users, state);
+        return {
+            ...newState,
+            status: UserStatus.FOUND
+        };
+    }),
+    on(actions.loadUsersFailure, state => ({
+        ...state,
+        status: UserStatus.Error
+    })),
+    on(actions.createUserSuccess, (state, action) => {
+        const newState = adapter.addOne(action.user, state);
+        return {
+            ...newState
+        };
+    }),
+    on(actions.createUserFailure, state => ({
+        ...state
+    })),
+    on(actions.deleteUserSuccess, (state, action) =>
+        adapter.removeOne(action.id, state)
+    )
 );

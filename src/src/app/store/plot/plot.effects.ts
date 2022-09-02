@@ -23,6 +23,15 @@ export class PlotEffects {
             ))
     ));
 
+    createPlot$ = createEffect(() => this.actions$.pipe(
+        ofType(fromPlot.createPlot),
+        switchMap(action => this.plotService.createPlot(action.plot)
+            .pipe(
+                map(plot => fromPlot.createPlotSuccess({ plot: plot })),
+                catchError((error) => of(fromPlot.createPlotFailure({ error: error })))
+            ))
+    ));
+
     loadPlotsWhenTransactionUpdated$ = createEffect(() => this.actions$.pipe(
         ofType(fromTransaction.createTransactionSuccess),
         withLatestFrom(

@@ -33,6 +33,15 @@ interface DataPlot {
   homeowners: string[];
 }
 
+interface DataUser {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  ssoId: string | null;
+  role: Role
+}
+
 interface DataTransaction {
   id?: string;
   userId: string | null;
@@ -86,7 +95,7 @@ let users: User[] = [
     lastName: "Test",
     ssoId: "auth0|62e43ac09ef7eff16baed140",
     id: "846516891",
-    role: Role.Homeowner
+    role: Role.Admin
   },
   {
     email: "callie.test@claytonhomes.com",
@@ -102,7 +111,7 @@ let users: User[] = [
     lastName: "Test",
     ssoId: null,
     id: "8465168asdfasdf",
-    role: Role.Homeowner
+    role: Role.Admin
   }
 ];
 
@@ -149,6 +158,9 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const { url, method, headers, body, params } = request;
 
+    const eventRegex = new RegExp("api/v1/events/(.+)$");
+    const usersRegex = new RegExp("api/v1/users/(.+)$");
+
     const token = parseJwt();
     
     // Add a simulated delay. Place the call to handleRoute() inside the observable chain, because
@@ -172,12 +184,22 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
 
       if (url.endsWith('/api/v1/users/login') && method == "POST")
         return login();
+      else if (url.includes('/api/v1/users') && method === "GET")
+        return getUsers();
+      else if (url.endsWith('api/v1/users') && method === "POST")
+        return createUser();
+      else if (usersRegex.test(url) && method === "DELETE")
+        return deleteUser();
       else if (url.includes('/api/v1/plots') && method === "GET")
         return getPlots();
       else if (url.endsWith('api/v1/plots') && method === "POST")
         return createPlot();
       else if (url.endsWith('api/v1/events') && method === "GET")
         return getEvents();
+      else if (url.endsWith('api/v1/events') && method === "POST")
+        return createEvent();
+      else if (eventRegex.test(url) && method === "DELETE")
+        return deleteEvent();
       else if (url.endsWith('api/v1/transactions') && method === "GET")
         return getTransactions();
       else if (url.endsWith('api/v1/transactions') && method === "POST")
@@ -234,24 +256,12 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         return ok(
           plots.filter(x =>
             x.homeowners.find(y => y === userId)
-          ).map(plot => ({
-            ...plot,
-            accountBalance: calculatePlotBalance(plot.id!),
-            homeowners: plot.homeowners.map(id =>
-              getUser(id)
-            )
-          }))
+          ).map(plot => _convertDataPlotToPlot(plot))
         );
       }
       else {
         // TODO Authorize the user can retrieve all plots
-        return ok(plots.map(plot => ({
-          ...plot,
-          accountBalance: calculatePlotBalance(plot.id!),
-          homeowners: plot.homeowners.map(id =>
-            getUser(id)
-          )
-        })));
+        return ok(plots.map(plot => _convertDataPlotToPlot(plot)));
       }
     }
 
@@ -271,11 +281,47 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       return users.find(x => x.id === id) || null;
     }
 
+    function getUsers(): Observable<HttpEvent<unknown>>{
+      return ok(users.map(user => ({
+        ...user
+      })));
+    }
+
+    function createUser(): Observable<HttpEvent<unknown>> {
+      // TODO Authorize the user can create users
+      const user = <User>body;
+      const newUser: DataUser = {
+        ...user,
+        id: newId()
+      };
+      users = [
+        ...users,
+        newUser
+      ];
+      saveSession();
+      return ok(_convertDataUserToUser(newUser));
+    }
+
+    function deleteUser() {
+      const id = usersRegex.exec(url)![1];
+
+      if (!users.find(u => u.id === id)) {
+        console.log("Could not find user with id", id);
+        return notFound();
+      }
+
+      users = users.filter(u => u.id !== id);
+      saveSession();
+      return ok();
+    }
+
+
     function createPlot(): Observable<HttpEvent<unknown>> {
       // TODO Authorize the user can create plots
+      const plot = <Plot>body;
       const newPlot: DataPlot = {
-        ...<Plot>body,
-        homeowners: [],
+        ...plot,
+        homeowners: plot.homeowners.map(owner => owner.id!),
         id: newId()
       };
       plots = [
@@ -283,7 +329,7 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         newPlot
       ];
       saveSession();
-      return ok(newPlot);
+      return ok(_convertDataPlotToPlot(newPlot));
     }
 
     function getEvents(): Observable<HttpEvent<unknown>> {
@@ -292,16 +338,44 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       ]);
     }
 
+    function createEvent(): Observable<HttpEvent<unknown>> {
+      const event = <Event>body;
+      const newEvent: Event = {
+        ...event,
+        id: newId()
+      };
+      events.push(newEvent);
+      saveSession();
+      return ok(newEvent);
+    }
+
     function getTransactions(): Observable<HttpEvent<unknown>> {
       const plotId = params.get("plotId");
-      // TOOD authorize the user to this plot
+      let filteredTransactions: DataTransaction[] = [];
+      if (plotId) {
+        // TODO authorize the user to this plot
+        filteredTransactions = transactions.filter(x => x.plotId == plotId)
+      }
+      else {
+        // TODO authorize the user can retrieve all transactions
+        filteredTransactions = transactions;
+      }
       return ok(
-        transactions.filter(x => x.plotId == plotId)
-          // HACK because the field names are the same, we can return the data object directly
-          .map(trans => ({
-            ...trans,
-          }))
+        filteredTransactions.map(tran => _convertDataTranToTran(tran))
       );
+    }
+
+    function deleteEvent() {
+      const eventId = eventRegex.exec(url)![1];
+
+      if (!events.find(e => e.id === eventId)) {
+        console.log("Could not find event with id", eventId);
+        return notFound();
+      }
+
+      events = events.filter(e => e.id !== eventId);
+      saveSession();
+      return ok();
     }
 
     function createTransaction(): Observable<HttpEvent<unknown>> {
@@ -311,18 +385,48 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       // TODO authorize the user to this plot
       // TOOD ensure UserId is the same as token userId
       const newDataTran: DataTransaction = {
-        ...tran,
         id: newId(),
         plotId: plotId,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        amount: tran.amount,
+        description: tran.description,
+        type: tran.type,
+        userId: tran.userId,
       };
       transactions = [
         ...transactions,
         newDataTran
       ];
       saveSession();
-      // HACK because the field names are the same, we can return the data object directly
-      return ok(newDataTran);
+      return ok(_convertDataTranToTran(newDataTran));
+    }
+
+    function _convertDataPlotToPlot(plot: DataPlot): Plot {
+      return {
+        ...plot,
+        homeowners: users.filter(user => plot.homeowners.includes(user.id!)),
+        accountBalance: calculatePlotBalance(plot.id!)
+      };
+    }
+
+    function _convertDataUserToUser(user: DataUser): User {
+      return {
+        ...user
+      };
+    }
+
+    function _convertDataTranToTran(tran: DataTransaction): Transaction {
+      const plot = plots.find(plot => plot.id === tran.plotId);
+      return {
+        ...tran,
+        plot: plot ? {
+          ...plot,
+          accountBalance: calculatePlotBalance(plot.id!),
+          homeowners: users.filter(user => plots)
+        } : undefined,
+        user: getUser(tran.userId!)!,
+        date: tran.date as unknown as Date
+      };
     }
 
     function ok(body: any = null) {

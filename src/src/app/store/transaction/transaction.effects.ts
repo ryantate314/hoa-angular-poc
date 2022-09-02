@@ -22,7 +22,7 @@ export class TransactionEffects {
 
     createTransaction$ = createEffect(() => this.actions$.pipe(
         ofType(fromTransaction.createTransaction),
-        switchMap(action => this.transactionService.createTransaction(action.plotId, action.transaction)
+        switchMap(action => this.transactionService.createTransaction(action.transaction, action.plotId)
             .pipe(
                 map(transaction => fromTransaction.createTransactionSuccess({ transaction: transaction })),
                 catchError((error) => of(fromTransaction.createTransactionFailure({ error: error })))
