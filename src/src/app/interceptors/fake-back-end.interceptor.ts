@@ -149,6 +149,8 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const { url, method, headers, body, params } = request;
 
+    const eventRegex = new RegExp("api/v1/events/(.+)$");
+
     const token = parseJwt();
     
     // Add a simulated delay. Place the call to handleRoute() inside the observable chain, because
@@ -178,6 +180,10 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         return createPlot();
       else if (url.endsWith('api/v1/events') && method === "GET")
         return getEvents();
+      else if (url.endsWith('api/v1/events') && method === "POST")
+        return createEvent();
+      else if (eventRegex.test(url) && method === "DELETE")
+        return deleteEvent();
       else if (url.endsWith('api/v1/transactions') && method === "GET")
         return getTransactions();
       else if (url.endsWith('api/v1/transactions') && method === "POST")
@@ -280,6 +286,17 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       ]);
     }
 
+    function createEvent(): Observable<HttpEvent<unknown>> {
+      const event = <Event>body;
+      const newEvent: Event = {
+        ...event,
+        id: newId()
+      };
+      events.push(newEvent);
+      saveSession();
+      return ok(newEvent);
+    }
+
     function getTransactions(): Observable<HttpEvent<unknown>> {
       const plotId = params.get("plotId");
       let filteredTransactions: DataTransaction[] = [];
@@ -294,6 +311,19 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       return ok(
         filteredTransactions.map(tran => _convertDataTranToTran(tran))
       );
+    }
+
+    function deleteEvent() {
+      const eventId = eventRegex.exec(url)![1];
+
+      if (!events.find(e => e.id === eventId)) {
+        console.log("Could not find event with id", eventId);
+        return notFound();
+      }
+
+      events = events.filter(e => e.id !== eventId);
+      saveSession();
+      return ok();
     }
 
     function createTransaction(): Observable<HttpEvent<unknown>> {

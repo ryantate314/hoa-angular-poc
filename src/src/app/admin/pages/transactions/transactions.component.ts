@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 
 import * as fromTransaction from '@app/store/transaction';
 import * as fromPlot from '@app/store/plot';
-import { Observable, startWith, map, withLatestFrom, Subject, takeUntil } from 'rxjs';
+import { Observable, startWith, map, withLatestFrom, Subject, takeUntil, skipUntil, filter } from 'rxjs';
 import { Transaction, TransactionType } from '@app/models/transaction.model';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { Plot } from '@app/models/plot.model';
@@ -45,6 +45,9 @@ export class TransactionsComponent implements OnInit, OnDestroy, AfterViewInit {
     };
 
     this.dataSource$ = this.store$.select(fromTransaction.selectAll).pipe(
+      skipUntil(this.store$.select(fromTransaction.getIsLoading).pipe(
+        filter(isLoading => isLoading === false)
+      )),
       map(trans => {
         this.dataSource.data = trans;
         this.sort?.sort({ id: 'date', start: 'desc', disableClear: true });
