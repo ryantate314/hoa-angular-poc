@@ -1,11 +1,12 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { faPersonMilitaryPointing } from "@fortawesome/free-solid-svg-icons";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from "rxjs/operators";
 import { AuthService } from "src/app/services/auth.service";
 import * as fromUser from "src/app/store/user";
-import { loadUserFailure, loadUsersFailure, loadUsersSuccess, loadUserSuccess, userNotFound } from "src/app/store/user";
+import { loadUserFailure, loadUsersFailure, loadUsersSuccess, loadUserSuccess, userNotFound, createUserFailure, createUserSuccess} from "src/app/store/user";
 
 @Injectable()
 export class UserEffects {
@@ -41,6 +42,15 @@ export class UserEffects {
             );
         }
         )
+    ));
+
+    createUser$ = createEffect(() => this.actions$.pipe(
+        ofType(fromUser.createUser),
+        switchMap(action => this.authService.createUser(action.user)
+            .pipe(
+                map(user => fromUser.createUserSuccess({ user: user })),
+                catchError((error) => of(fromUser.createUserFailure({ error: error })))
+            ))
     ));
 
 }

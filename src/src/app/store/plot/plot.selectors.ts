@@ -23,4 +23,4 @@ export const getPlot = (id: string) =>
     createSelector(
         selectEntities,
         plots => plots[id] ?? null
-    );
+);

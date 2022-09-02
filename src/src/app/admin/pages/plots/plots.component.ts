@@ -1,10 +1,10 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy} from '@angular/core';
 import { AppState } from '@app/store/app-state';
-import { getCurrentUser, selectAll as selectAllUsers } from '@app/store/user';
+import { getCurrentUser, loadUsers, selectAll as selectAllUsers } from '@app/store/user';
 import { User } from '@app/models/user.model';
 import { PaymentPlan, Plot, PlotStatus } from '@app/models/plot.model';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, withLatestFrom} from 'rxjs';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -28,7 +28,7 @@ export interface PlotView {
 export class PlotsComponent implements OnInit, OnDestroy {
   separatorKeysCodes: number[] = [ENTER, COMMA];
   ownerCtrl = new FormControl('');
-  filteredOwners: Observable<string[]>;
+  filteredOwners$: Observable<User[]>;
   owners: User[] = [];
   allOwners$: Observable<User[]>;
   isPlotCardVisible = false;
@@ -56,36 +56,31 @@ export class PlotsComponent implements OnInit, OnDestroy {
 
     this.allOwners$ = this.store$.select(selectAllUsers);
 
-    this.filteredOwners = this.ownerCtrl.valueChanges.pipe(
+    this.filteredOwners$ = this.ownerCtrl.valueChanges.pipe(
+      map((value: string | User | null) => typeof value === 'string' ? value.toLowerCase() : value?.firstName+" "+value?.lastName),
       startWith(null),
-      map((owner: string | null) => 
-        (owner ? this._filter(owner) : this.allOwners.slice())),
+      withLatestFrom(this.allOwners$),
+      map(([searchTerm, owners ]) => 
+        (searchTerm ? this._filter(searchTerm, owners) : owners.slice())),
     );
 
-      this.form = this.fb.group({
-        'street': [],
-        'city': [],
-        'state': [],
-        'zip': [],
-        'status': [PlotStatus.Occupied],
-        'paymentPlan': [PaymentPlan.Monthly],
-        'homeowners': [],
-      });
+
+    this.form = this.fb.group({
+      'street': [],
+      'city': [],
+      'state': [],
+      'zip': [],
+      'status': [PlotStatus.Occupied],
+      'paymentPlan': [PaymentPlan.Monthly],
+      'homeowners': [],
+    });
   }
 
-  add(event: MatChipInputEvent): void {
-    const value = (event.value || "").trim();
-
-    if(value) {
-      this.owners.push(value);
-    }
-
-    event.chipInput!.clear();
-
-    this.ownerCtrl.setValue(null);
+  displayOwner(user: User): string {
+    return user && user.firstName+" "+user.lastName;
   }
 
-  remove(owner: string): void {
+  remove(owner: User): void {
     const index = this.owners.indexOf(owner);
 
     if(index >= 0) {
@@ -94,15 +89,15 @@ export class PlotsComponent implements OnInit, OnDestroy {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.owners.push(event.option.viewValue);
+    this.owners.push(event.option.value);
     this.ownerInput.nativeElement.value = '';
     this.ownerCtrl.setValue(null);
   }
 
-  private _filter(value: string): string[] {
+  private _filter(value: string, owners: User[]): User[] {
     const filterValue = value.toLowerCase();
 
-    return this.allOwners.filter(owner => owner.toLowerCase().includes(filterValue));
+    return owners.filter(owner => (owner.firstName+" "+owner.lastName).toLowerCase().includes(filterValue));
   }
 
   submitNewPlot(){
@@ -115,7 +110,7 @@ export class PlotsComponent implements OnInit, OnDestroy {
           zip: this.form.get('zip')!.value,
           status: this.form.get('status')!.value,
           paymentPlan: this.form.get('paymentPlan')!.value,
-          homeowners: this.form.get('homeowners')!.value,
+          homeowners: this.owners,
           accountBalance: 0
         }
       })
@@ -125,6 +120,10 @@ export class PlotsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store$.dispatch(
       loadPlots({})
+    );
+
+    this.store$.dispatch(
+      loadUsers()
     );
 
     this.actions$.pipe(

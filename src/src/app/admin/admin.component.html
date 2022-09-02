@@ -1,9 +1,21 @@
 <mat-toolbar color="primary">
-    <a [routerLink]="['/admin']" class="navbar-brand">Vanderbilt HOA Admin</a>
-    <a [routerLink]="['/admin/transactions']" class="nav-link">Transactions</a>
+    <a [routerLink]="['/admin']" class="navbar-brand">VanderbiltHOA<i style="font-size:smaller;color:aquamarine;">Admin</i></a>
+    <button mat-stroked-button [routerLink]="['/admin/transactions']" class="nav-link">
+        Transactions
+    </button>
+    <button mat-stroked-button [routerLink]="['/admin/plots']" class="nav-link">
+        Plots
+    </button>
+    <button mat-stroked-button [routerLink]="['/admin/users']" class="nav-link">
+        Users
+    </button> 
+    <button mat-stroked-button [routerLink]="['/admin/events']" class="nav-link">
+        Events
+    </button> 
     <span class="toolbar-spacer"></span>
     <button mat-stroked-button *ngIf="(isAuthenticated$ | async)" class="my-2" (click)="logout()">Log Out</button>
 </mat-toolbar>
+<br>
 <div class="container">
     <router-outlet></router-outlet>
 </div>

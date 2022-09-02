@@ -14,9 +14,3 @@ export const getCurrentUser = createSelector(featureSelector, (state) => state.c
 export const hasUserAccount = createSelector(featureSelector, (state) => state.currentUserStatus === UserStatus.FOUND);
 export const getUserLoading = createSelector(featureSelector, (state) => state.currentUserStatus === UserStatus.LOADING);
 export const getUserStatus = createSelector(featureSelector, (state) => state.currentUserStatus);
-
-export const getUsers = () => 
-    createSelector(
-        selectEntities,
-        users => users ?? null
-);

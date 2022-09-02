@@ -21,6 +21,7 @@ import { TransactionsComponent } from './pages/transactions/transactions.compone
 import { SharedModule } from '@app/shared/shared.module';
 import { NgxMaskModule } from 'ngx-mask';
 import { MatSortModule } from '@angular/material/sort';
+import { UsersComponent } from './pages/users/users.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { MatSortModule } from '@angular/material/sort';
     AdminComponent,
     PlotsComponent,
     TransactionsComponent,
+    UsersComponent,
   ],
   imports: [
     CommonModule,

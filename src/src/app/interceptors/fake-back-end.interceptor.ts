@@ -33,6 +33,15 @@ interface DataPlot {
   homeowners: string[];
 }
 
+interface DataUser {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  ssoId: string | null;
+  role: Role
+}
+
 interface DataTransaction {
   id?: string;
   userId: string | null;
@@ -174,6 +183,8 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         return login();
       else if (url.includes('/api/v1/users') && method === "GET")
         return getUsers();
+      else if (url.endsWith('api/v1/users') && method === "POST")
+        return createUser();
       else if (url.includes('/api/v1/plots') && method === "GET")
         return getPlots();
       else if (url.endsWith('api/v1/plots') && method === "POST")
@@ -267,11 +278,27 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       })));
     }
 
+    function createUser(): Observable<HttpEvent<unknown>> {
+      // TODO Authorize the user can create users
+      const user = <User>body;
+      const newUser: DataUser = {
+        ...user,
+        id: newId()
+      };
+      users = [
+        ...users,
+        newUser
+      ];
+      saveSession();
+      return ok(_convertDataUserToUser(newUser));
+    }
+
     function createPlot(): Observable<HttpEvent<unknown>> {
       // TODO Authorize the user can create plots
+      const plot = <Plot>body;
       const newPlot: DataPlot = {
-        ...<Plot>body,
-        homeowners: [],
+        ...plot,
+        homeowners: plot.homeowners.map(owner => owner.id!),
         id: newId()
       };
       plots = [
@@ -332,6 +359,12 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         ...plot,
         homeowners: users.filter(user => plot.homeowners.includes(user.id!)),
         accountBalance: calculatePlotBalance(plot.id!)
+      };
+    }
+
+    function _convertDataUserToUser(user: DataUser): User {
+      return {
+        ...user
       };
     }
 

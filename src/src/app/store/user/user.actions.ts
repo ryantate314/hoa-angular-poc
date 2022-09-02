@@ -8,3 +8,7 @@ export const userNotFound = createAction('[User] Load User Not Found');
 export const loadUsers = createAction('[User] Load Users');
 export const loadUsersSuccess = createAction('[User] Load Users Success', props<{ users: User[] }>());
 export const loadUsersFailure = createAction('[User] Load Users Failure', props<{ error: any }>());
+export const createUser = createAction('[User] Creat User', props<{ user: User }>());
+export const createUserSuccess = createAction('[User] Creat User Success', props<{ user: User }>());
+export const createUserFailure = createAction('[User] Creat User Failure', props<{ error: any }>());
+

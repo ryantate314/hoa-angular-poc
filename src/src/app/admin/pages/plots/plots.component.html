@@ -1,5 +1,4 @@
 <div class="container">
-    <h1>Hi, {{(user$ | async)?.firstName}}</h1>
     <div class="d-flex mt-4"> 
         <h1>Plots</h1>
         <span class="flex-spacer"></span>    
@@ -67,9 +66,9 @@
                         <mat-label>Owners</mat-label>
                         <mat-chip-list #chipList aria-label="Owner selection" formControlName="homeowners">
                         <mat-chip
-                            *ngFor="let owner of owners.value"
+                            *ngFor="let owner of owners"
                             (removed)="remove(owner)">
-                            {{owner}}
+                            {{displayOwner(owner)}}
                             <button matChipRemove>
                             <mat-icon>cancel</mat-icon>
                             </button>
@@ -81,11 +80,11 @@
                             [matAutocomplete]="auto"
                             [matChipInputFor]="chipList"
                             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                            (matChipInputTokenEnd)="add($event)">
+                            required>
                         </mat-chip-list>
-                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-                        <mat-option *ngFor="let owner of filteredOwners | async" [value]="owner">
-                            {{owner}}
+                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)" [displayWith]="displayOwner">
+                        <mat-option *ngFor="let owner of filteredOwners$ | async" [value]="owner">
+                            {{displayOwner(owner)}}
                         </mat-option>
                         </mat-autocomplete>
                     </mat-form-field>
