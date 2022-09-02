@@ -140,7 +140,6 @@ export class TransactionsComponent implements OnInit, OnDestroy, AfterViewInit {
         fromTransaction.createTransaction({ transaction: transaction, plotId: plot.id! })
       );
     }
-    
   }
 
 }

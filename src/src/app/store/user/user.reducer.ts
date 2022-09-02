@@ -15,7 +15,8 @@ export enum UserStatus {
 
 export interface UserState extends EntityState<User> {
     currentUser: User | null,
-    currentUserStatus: UserStatus
+    currentUserStatus: UserStatus,
+    status: UserStatus
 }
 
 export const adapter = createEntityAdapter<User>({
@@ -24,7 +25,8 @@ export const adapter = createEntityAdapter<User>({
 
 const initialState = adapter.getInitialState({
     currentUser: null,
-    currentUserStatus: UserStatus.INITIAL
+    currentUserStatus: UserStatus.INITIAL,
+    status: UserStatus.INITIAL
 });
 
 export const userReducer = createReducer<UserState>(initialState,
@@ -60,13 +62,11 @@ export const userReducer = createReducer<UserState>(initialState,
     on(actions.createUserSuccess, (state, action) => {
         const newState = adapter.addOne(action.user, state);
         return {
-            ...newState,
-            status: UserStatus.FOUND
+            ...newState
         };
     }),
     on(actions.createUserFailure, state => ({
-        ...state,
-        status: UserStatus.Error
+        ...state
     })),
     on(actions.deleteUserSuccess, (state, action) =>
         adapter.removeOne(action.id, state)

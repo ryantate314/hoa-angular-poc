@@ -2,9 +2,10 @@
 <div class="container">
     <h1 class="mb-3">Hi, {{ (user$ | async)!.firstName }}</h1>
     <ng-container *ngIf="!(isLoading$ | async) else loading">
-        <ng-container *ngIf="plot$ | async as plot">
+        <mat-card *ngIf="plot$ | async as plot" class="mat-elevation-z8">
             <form [formGroup]="form" (submit)="onSubmit()">
-                <h2>{{plot.street}}</h2>
+                <mat-card-title><h2>Make a Payment</h2></mat-card-title>
+                <mat-card-subtitle>{{plot.street}} {{plot.city}}, {{plot.state}} {{plot.zip}}</mat-card-subtitle>
         
                 <div class="col-sm-6">
                     <mat-form-field appearance="fill">
@@ -25,11 +26,11 @@
 
                 <app-credit-card-input formControlName="creditCard"></app-credit-card-input>
 
-                <button mat-raised-button color="primary" type="submit" class="me-2" [disabled]="!form.valid || isSubmitting">Submit</button>
-                <button mat-raised-button (click)="onCancel()">Cancel</button>
+                <button mat-raised-button color="primary" type="submit" class="me-2" [disabled]="isSubmitting">Submit</button>
+                <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
                 <app-loading *ngIf="isSubmitting"></app-loading>
             </form>
-        </ng-container>
+        </mat-card>
     </ng-container>
 </div>
 

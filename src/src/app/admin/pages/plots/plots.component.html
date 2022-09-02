@@ -1,8 +1,8 @@
 <div class="container">
-    <div class="d-flex mt-4"> 
+    <div class="d-flex"> 
         <h1>Plots</h1>
         <span class="flex-spacer"></span>    
-        <button color="primary" (click)="this.isPlotCardVisible = !this.isPlotCardVisible;" mat-fab>
+        <button (click)="this.isPlotCardVisible = !this.isPlotCardVisible;" mat-fab>
             <mat-icon *ngIf="!this.isPlotCardVisible" fontIcon="add_circle"></mat-icon>
             <mat-icon *ngIf="this.isPlotCardVisible"  fontIcon="cancel_circle"></mat-icon>
         </button>

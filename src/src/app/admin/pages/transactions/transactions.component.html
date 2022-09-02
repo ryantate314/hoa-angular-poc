@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div *ngIf="isEditing">
+<mat-card *ngIf="isEditing">
     <h3>Create a Transaction</h3>
 
     <form [formGroup]="form" (submit)="onSubmit()">
@@ -56,14 +56,14 @@
         </div>
 
         <div>
-            <button mat-raised-button color="primary" type="submit" class="me-3" [disabled]="!form.valid || isSubmitting">Submit</button>
-            <button mat-raised-button (click)="form.reset(); isEditing = false">Cancel</button>
+            <button mat-raised-button color="primary" type="submit" class="me-3" [disabled]="isSubmitting">Submit</button>
+            <button mat-stroked-button color="warn" (click)="form.reset(); isEditing = false">Cancel</button>
         </div>
         <app-loading *ngIf="isSubmitting" class="d-block mt-3"></app-loading>
     </form>
-</div>
+</mat-card>
 
-<ng-container *ngIf="dataSource$ | async as dataSource; else loading">
+<mat-card *ngIf="dataSource$ | async as dataSource; else loading" class="mat-elevation-z8 mt-4">
     <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear start="desc"> Date </th>
@@ -105,7 +105,7 @@
         <tr mat-header-row *matHeaderRowDef="['date', 'plot', 'type', 'description', 'user', 'amount']"></tr>
         <tr mat-row *matRowDef="let row; columns: ['date', 'plot', 'type', 'description', 'user', 'amount']"></tr>
     </table>
-</ng-container>
+</mat-card>
 
 <ng-template #loading>
     <app-loading></app-loading>

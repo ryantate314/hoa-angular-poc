@@ -4,8 +4,8 @@ import { Role, User } from '@app/models/user.model';
 import { AppState } from '@app/store/app-state';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { map, Observable, Subject, takeUntil } from 'rxjs';
-import { createUser, deleteUser, getCurrentUser, loadUsers, selectAll as selectAllUsers, createUserSuccess } from '@app/store/user';
+import { filter, map, Observable, skipUntil, Subject, takeUntil } from 'rxjs';
+import { createUser, deleteUser, getCurrentUser, loadUsers, selectAll as selectAllUsers, createUserSuccess, getUsersLoading } from '@app/store/user';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 export interface UserView {
@@ -31,6 +31,9 @@ export class UsersComponent implements OnInit {
 
   constructor(private store$: Store<AppState>, private fb: FormBuilder, private actions$: Actions, public dialog: MatDialog) { 
     this.users$ = this.store$.select(selectAllUsers).pipe(
+      skipUntil(this.store$.select(getUsersLoading).pipe(
+        filter(isLoading => !isLoading)
+      )),
       map(users=>
         users.map(user => ({
           email: user.email,

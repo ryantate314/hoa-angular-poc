@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppState } from '@app/store/app-state';
 import { Store } from '@ngrx/store';
@@ -15,6 +15,7 @@ import { Location } from '@angular/common';
 import { createTransaction, createTransactionSuccess } from '@app/store/transaction';
 import { Transaction, TransactionType } from '@app/models/transaction.model';
 import { Actions, ofType } from '@ngrx/effects';
+import { CreditCardInputComponent } from '@app/components/credit-card-input/credit-card-input.component';
 
 
 function conditionalValidator(predicate: any, validator: any) {
@@ -46,10 +47,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading$: Observable<boolean>;
   user$: Observable<User>;
 
-  creditCard$ = new Subject<CreditCard>;
-  creditCardValid$ = new Subject<boolean>();
-  creditCardValid: boolean = false;
-
   submit$ = new Subject<void>();
 
   destroyed$ = new Subject<void>();
@@ -59,6 +56,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   isSubmitting = false;
 
   amountType = AmountType;
+
+  @ViewChild(CreditCardInputComponent) creditCardComponent?: CreditCardInputComponent;
 
   constructor(private store$: Store<AppState>,
     private router: Router,
@@ -179,6 +178,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSubmit() {
+    this.creditCardComponent!.formTouched();
+
     if (this.form.valid) {
       this.isSubmitting = true;
       this.submit$.next();

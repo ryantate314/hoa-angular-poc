@@ -7,7 +7,7 @@ import { map, Observable, tap, filter, switchMap, combineLatest, Subject, takeUn
 import * as fromPlot from '@app/store/plot';
 import * as fromTransaction from '@app/store/transaction';
 import * as fromUser from '@app/store/user';
-import { Transaction } from '@app/models/transaction.model';
+import { Transaction, TransactionType } from '@app/models/transaction.model';
 import { User } from '@app/models/user.model';
 
 @Component({
@@ -26,6 +26,8 @@ export class PlotDetailsComponent implements OnInit, OnDestroy {
   public isLoading$: Observable<boolean>;
 
   private destroyed$ = new Subject<void>();
+
+  public transType = TransactionType;
 
   constructor(private route: ActivatedRoute, private router: Router, private store$: Store<AppState>) {
 
