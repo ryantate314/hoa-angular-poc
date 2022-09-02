@@ -159,6 +159,7 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
     const { url, method, headers, body, params } = request;
 
     const eventRegex = new RegExp("api/v1/events/(.+)$");
+    const usersRegex = new RegExp("api/v1/users/(.+)$");
 
     const token = parseJwt();
     
@@ -187,6 +188,8 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
         return getUsers();
       else if (url.endsWith('api/v1/users') && method === "POST")
         return createUser();
+      else if (usersRegex.test(url) && method === "DELETE")
+        return deleteUser();
       else if (url.includes('/api/v1/plots') && method === "GET")
         return getPlots();
       else if (url.endsWith('api/v1/plots') && method === "POST")
@@ -298,6 +301,20 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
       saveSession();
       return ok(_convertDataUserToUser(newUser));
     }
+
+    function deleteUser() {
+      const id = usersRegex.exec(url)![1];
+
+      if (!users.find(u => u.id === id)) {
+        console.log("Could not find user with id", id);
+        return notFound();
+      }
+
+      users = users.filter(u => u.id !== id);
+      saveSession();
+      return ok();
+    }
+
 
     function createPlot(): Observable<HttpEvent<unknown>> {
       // TODO Authorize the user can create plots

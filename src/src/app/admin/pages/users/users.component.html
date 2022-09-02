@@ -70,13 +70,10 @@
             <td mat-cell *matCellDef="let user"> {{user.name}} </td> 
         </ng-container>
 
-        <ng-container matColumnDef="edit">
+        <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef> Actions </th>
             <td mat-cell *matCellDef="let user">
-                <button color="primary" (click)="null" mat-icon-button>
-                    <mat-icon fontIcon="edit"></mat-icon>
-                </button>
-                <button color="warn" (click)="null" mat-icon-button>
+                <button color="warn" (click)="deleteUser(user)" mat-icon-button>
                     <mat-icon fontIcon="delete"></mat-icon>
                 </button>
             </td>

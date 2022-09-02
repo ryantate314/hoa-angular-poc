@@ -20,10 +20,12 @@ import { TransactionsComponent } from './pages/transactions/transactions.compone
 import { SharedModule } from '@app/shared/shared.module';
 import { NgxMaskModule } from 'ngx-mask';
 import { MatSortModule } from '@angular/material/sort';
-import { UsersComponent } from './pages/users/users.component';
+import { UsersComponent, UsersDeleteDialog } from './pages/users/users.component';
 import { EventsComponent } from './pages/events/events.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 @NgModule({
   declarations: [
@@ -33,6 +35,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     TransactionsComponent,
     UsersComponent,
     EventsComponent,
+    UsersDeleteDialog
   ],
   imports: [
     CommonModule,
@@ -55,7 +58,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,
     SharedModule,
-    NgxMaskModule.forChild()
+    NgxMaskModule.forChild(),
+    MatDialogModule
   ]
 })
 export class AdminModule { }

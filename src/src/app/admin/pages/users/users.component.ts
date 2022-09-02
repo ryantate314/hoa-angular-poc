@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Role, User } from '@app/models/user.model';
 import { AppState } from '@app/store/app-state';
-import { Actions } from '@ngrx/effects';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { map, Observable } from 'rxjs';
-import { createUser, getCurrentUser, loadUsers, selectAll as selectAllUsers } from '@app/store/user';
-
+import { map, Observable, Subject, takeUntil } from 'rxjs';
+import { createUser, deleteUser, getCurrentUser, loadUsers, selectAll as selectAllUsers, createUserSuccess } from '@app/store/user';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 export interface UserView {
   email: string;
@@ -23,12 +23,13 @@ export interface UserView {
 export class UsersComponent implements OnInit {
   user$: Observable<User | null>;
   users$: Observable<UserView[]>;
-  usersColumns: string[] = ['email','role','name','edit'];
+  usersColumns: string[] = ['email','role','name','actions'];
   isUserCardVisible = false;
   form: FormGroup;
+  destroyed$ = new Subject<void>();
 
 
-  constructor(private store$: Store<AppState>, private fb: FormBuilder, private actions$: Actions) { 
+  constructor(private store$: Store<AppState>, private fb: FormBuilder, private actions$: Actions, public dialog: MatDialog) { 
     this.users$ = this.store$.select(selectAllUsers).pipe(
       map(users=>
         users.map(user => ({
@@ -54,6 +55,18 @@ export class UsersComponent implements OnInit {
     this.store$.dispatch(
       loadUsers()
     )
+
+    this.actions$.pipe(
+      ofType(createUserSuccess),
+      takeUntil(this.destroyed$)
+    ).subscribe(()=>{
+      this.isUserCardVisible = false;
+      this.form.reset();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
   }
 
   submitNewUser(){
@@ -69,7 +82,37 @@ export class UsersComponent implements OnInit {
       })
     );
   }
+  
+  deleteUser(user: UserView) {
+    let dialogRef = this.dialog.open(UsersDeleteDialog, {
+      data: {
+        user: user,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result) this.store$.dispatch(
+        deleteUser({
+          id: user.id!
+        })
+      )
+    })
+  }
 
 
+}
 
+@Component({
+  selector: 'users-delete-dialog',
+  templateUrl: 'users.delete-dialog.html',
+})
+export class UsersDeleteDialog {
+  constructor(
+    public dialogRef: MatDialogRef<UsersDeleteDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }

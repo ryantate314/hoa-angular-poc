@@ -53,4 +53,13 @@ export class UserEffects {
             ))
     ));
 
+    deleteUser$ = createEffect(() => this.actions$.pipe(
+        ofType(fromUser.deleteUser),
+        switchMap(action => this.authService.deleteUser(action.id)
+            .pipe(
+                map(() => fromUser.deleteUserSuccess({ id: action.id })),
+                catchError((error) => of(fromUser.deleteUserFailure({ error: error })))
+            ))
+    ));
+
 }

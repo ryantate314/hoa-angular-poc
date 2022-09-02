@@ -68,4 +68,7 @@ export const userReducer = createReducer<UserState>(initialState,
         ...state,
         status: UserStatus.Error
     })),
+    on(actions.deleteUserSuccess, (state, action) =>
+        adapter.removeOne(action.id, state)
+    )
 );

@@ -52,4 +52,10 @@ export class AuthService {
   public createUser(user: User):  Observable<User> {
     return this.http.post<User>(`${environment.apiUrl}/users`, user);
   }
+
+  public deleteUser(id: string): Observable<void> {
+    return this.http.delete<void>(
+      `${environment.apiUrl}/users/${id}`
+    );
+  }
 }
