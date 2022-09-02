@@ -1,0 +1,16 @@
+<app-toolbar></app-toolbar>
+<div class="container">
+    <mat-card *ngIf="event$ | async as event; else loading">
+        <mat-card-title>{{ event.name }}</mat-card-title>
+        <div *ngIf="event.imageUrl" class="image-container mb-3">
+            <img [src]="event.imageUrl" />
+        </div>
+        <p>{{ event.startDate | date: 'short' }} - {{ event.endDate | date: 'shortTime' }} </p>
+        <p>@ {{ event.location }}</p>
+        <p>{{ event.description }}</p>
+    </mat-card>
+</div>
+
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>

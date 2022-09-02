@@ -3,8 +3,14 @@ import { createReducer, on } from "@ngrx/store";
 import { Event } from "src/app/models/event.model";
 import { loadEvents, loadEventsSuccess } from "./event.actions";
 
+export enum EventStatus {
+    Initial = "Initial",
+    Loading = "Loading",
+    Loaded = "Loaded"
+}
+
 export interface EventState extends EntityState<Event> {
-    isLoading: boolean | null
+    status: EventStatus
 }
 
 export const entityAdapter = createEntityAdapter<Event>({
@@ -13,19 +19,19 @@ export const entityAdapter = createEntityAdapter<Event>({
 });
 
 const initialState = entityAdapter.getInitialState({
-    isLoading: null
+    status: EventStatus.Initial
 });
 
 export const eventReducer = createReducer<EventState>(initialState,
     on(loadEvents, (state) => ({
         ...state,
-        isLoading: true
+        status: EventStatus.Loading
     })),
     on(loadEventsSuccess, (state, action) => {
         const updatedState = entityAdapter.setAll(action.events, state);
         return {
             ...updatedState,
-            isLoading: false
+            status: EventStatus.Loaded
         };
     })
 );

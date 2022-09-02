@@ -113,7 +113,7 @@ let events: Event[] = [
     description: "Party at the pool.",
     startDate: new Date(2022, 12, 25, 17),
     endDate: new Date(2022, 12, 25, 18),
-    imageUrl: null,
+    imageUrl: "https://images.pexels.com/photos/7294545/pexels-photo-7294545.jpeg?cs=srgb&dl=pexels-kindel-media-7294545.jpg&fm=jpg",
     location: "Clubhouse"
   }
 ];
@@ -153,7 +153,7 @@ export class FakeBackEndInterceptor implements HttpInterceptor {
     
     // Add a simulated delay. Place the call to handleRoute() inside the observable chain, because
     // the Auth0 interceptor relies on the observable not being subscribed to. Otherwise, there are duplicate calls.
-    return timer(250).pipe(
+    return timer(500).pipe(
       concatMap(() => {
         console.log("Intercepting request to " + url, request);
         return handleRoute();
