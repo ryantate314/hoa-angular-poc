@@ -1,0 +1,26 @@
+.flex-spacer {
+    flex: 1 1 auto;
+}
+
+table {
+    width: 100%;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+.text-elipsis {
+    text-overflow: ellipsis;
+}
+
+img {
+    max-width: 100%;
+}
+
+.image-container {
+    text-align: center;
+    background-color: lightgray;
+    overflow-y: hidden;
+    max-height: 20vh;
+}

@@ -17,10 +17,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { TransactionsComponent } from './pages/transactions/transactions.component';
 import { SharedModule } from '@app/shared/shared.module';
 import { NgxMaskModule } from 'ngx-mask';
 import { MatSortModule } from '@angular/material/sort';
+import { EventsComponent } from './pages/events/events.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -28,6 +32,7 @@ import { MatSortModule } from '@angular/material/sort';
     AdminComponent,
     PlotsComponent,
     TransactionsComponent,
+    EventsComponent,
   ],
   imports: [
     CommonModule,
@@ -45,6 +50,10 @@ import { MatSortModule } from '@angular/material/sort';
     MatIconModule,
     MatAutocompleteModule,
     MatCardModule,
+    MatDatepickerModule,
+    MatProgressSpinnerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
     SharedModule,
     NgxMaskModule.forChild()
   ]

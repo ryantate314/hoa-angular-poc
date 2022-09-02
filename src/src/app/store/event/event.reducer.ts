@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityState } from "@ngrx/entity";
 import { createReducer, on } from "@ngrx/store";
 import { Event } from "src/app/models/event.model";
-import { loadEvents, loadEventsSuccess } from "./event.actions";
+import { createEventSuccess, deleteEventSuccess, loadEvents, loadEventsSuccess } from "./event.actions";
 
 export enum EventStatus {
     Initial = "Initial",
@@ -14,7 +14,7 @@ export interface EventState extends EntityState<Event> {
 }
 
 export const entityAdapter = createEntityAdapter<Event>({
-    selectId: x => x.id,
+    selectId: x => x.id!,
     sortComparer: (a, b) => a.startDate.getTime() - b.startDate.getTime()
 });
 
@@ -33,5 +33,11 @@ export const eventReducer = createReducer<EventState>(initialState,
             ...updatedState,
             status: EventStatus.Loaded
         };
-    })
+    }),
+    on(createEventSuccess, (state, action) => 
+        entityAdapter.addOne(action.event, state)
+    ),
+    on(deleteEventSuccess, (state, action) =>
+        entityAdapter.removeOne(action.eventId, state)
+    )
 );
