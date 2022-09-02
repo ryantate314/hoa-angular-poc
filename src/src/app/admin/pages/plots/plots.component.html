@@ -99,31 +99,37 @@
     
     <br>
     
-    <table mat-table [dataSource]="(plots$ | async)!" class="mat-elevation-z8">
+    <ng-container *ngIf="plots$ | async as plots; else loading">
+        <table mat-table [dataSource]="plots" class="mat-elevation-z8">
 
-        <ng-container matColumnDef="address">
-            <th mat-header-cell *matHeaderCellDef> Address </th>
-            <td mat-cell *matCellDef="let plot"> {{plot.address}} </td>
-        </ng-container>
+            <ng-container matColumnDef="address">
+                <th mat-header-cell *matHeaderCellDef> Address </th>
+                <td mat-cell *matCellDef="let plot"> {{plot.address}} </td>
+            </ng-container>
 
-        <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef> Status </th>
-            <td mat-cell *matCellDef="let plot"> {{plot.status}} </td>
-        </ng-container>
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let plot"> {{plot.status}} </td>
+            </ng-container>
 
-        <ng-container matColumnDef="owners">
-            <th mat-header-cell *matHeaderCellDef> Owners </th>
-            <td mat-cell *matCellDef="let plot"> {{plot.owners}} </td> 
-            <!-- may need to stringify above list ^ non-normalized view.. ik -->
-        </ng-container>
+            <ng-container matColumnDef="owners">
+                <th mat-header-cell *matHeaderCellDef> Owners </th>
+                <td mat-cell *matCellDef="let plot"> {{plot.owners}} </td> 
+                <!-- may need to stringify above list ^ non-normalized view.. ik -->
+            </ng-container>
 
-        <ng-container matColumnDef="balance">
-            <th mat-header-cell *matHeaderCellDef> Account Balance </th>
-            <td mat-cell *matCellDef="let plot"> {{plot.balance | currency}} </td>
-            <!-- calculated value -->
-        </ng-container>
+            <ng-container matColumnDef="balance">
+                <th mat-header-cell *matHeaderCellDef> Account Balance </th>
+                <td mat-cell *matCellDef="let plot"> {{plot.balance | currency}} </td>
+                <!-- calculated value -->
+            </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="plotsColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: plotsColumns;"></tr>
-    </table>
+            <tr mat-header-row *matHeaderRowDef="plotsColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: plotsColumns;"></tr>
+        </table>
+    </ng-container>
 </div>
+
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>

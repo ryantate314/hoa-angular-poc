@@ -4,13 +4,13 @@ import { getCurrentUser, loadUsers, selectAll as selectAllUsers } from '@app/sto
 import { User } from '@app/models/user.model';
 import { PaymentPlan, Plot, PlotStatus } from '@app/models/plot.model';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject, withLatestFrom} from 'rxjs';
+import { Observable, Subject, withLatestFrom } from 'rxjs';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { map, startWith, takeUntil } from 'rxjs/operators';
-import { createPlot, loadPlots, selectAll, createPlotSuccess, createPlotFailure } from '@app/store/plot';
+import { map, skipUntil, startWith, takeUntil, filter } from 'rxjs/operators';
+import { createPlot, loadPlots, selectAll, createPlotSuccess, createPlotFailure, arePlotsLoading } from '@app/store/plot';
 import { Actions, ofType } from '@ngrx/effects';
 
 export interface PlotView {
@@ -43,6 +43,9 @@ export class PlotsComponent implements OnInit, OnDestroy {
 
   constructor(private store$: Store<AppState>, private fb: FormBuilder, private  actions$: Actions) {
     this.plots$ = this.store$.select(selectAll).pipe(
+      skipUntil(this.store$.select(arePlotsLoading).pipe(
+        filter(isLoading => !isLoading)
+      )),
       map(plots => 
         plots.map(plot => ({
           address: plot.street,

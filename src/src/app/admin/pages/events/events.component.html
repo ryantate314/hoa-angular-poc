@@ -1,5 +1,5 @@
 <div class="d-flex">
-    <h1>Events</h1>
+    <h1>Community Events</h1>
     <span class="flex-spacer"></span>
     <div *ngIf="!isEditing">
         <button mat-fab (click)="onEditClick()">
@@ -81,7 +81,7 @@
         <div class="d-flex">
             <mat-card-title class="mb-3">{{ event.name }} @ {{ event.location }}</mat-card-title>
             <div class="flex-spacer"></div>
-            <button mat-mini-fab title="Delete Event" (click)="delete(event)" *ngIf="!isDeleting(event)">
+            <button mat-icon-button title="Delete Event" color="warn" (click)="delete(event)" *ngIf="!isDeleting(event)">
                 <mat-icon fontIcon="delete"></mat-icon>
             </button>
             <mat-spinner *ngIf="isDeleting(event)" [diameter]="30"></mat-spinner>
