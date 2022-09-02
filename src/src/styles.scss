@@ -9,11 +9,77 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
+$blue-palette: (
+    50 : #e0e9f1,
+    100 : #b3c9dd,
+    200 : #80a5c6,
+    300 : #4d81af,
+    400 : #26669d,
+    500 : #004b8c,
+    600 : #004484,
+    700 : #003b79,
+    800 : #00336f,
+    900 : #00235c,
+    A100 : #8daeff,
+    A200 : #5a8aff,
+    A400 : #2766ff,
+    A700 : #0e53ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+
+$green-palette: (
+    50 : #e0f6eb,
+    100 : #b3e8cd,
+    200 : #80d9ac,
+    300 : #4dca8b,
+    400 : #26be72,
+    500 : #00b359,
+    600 : #00ac51,
+    700 : #00a348,
+    800 : #009a3e,
+    900 : #008b2e,
+    A100 : #b7ffc9,
+    A200 : #84ffa2,
+    A400 : #51ff7c,
+    A700 : #37ff69,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$hoa-angular-primary: mat.define-palette(mat.$blue-palette);
-$hoa-angular-accent: mat.define-palette(mat.$light-green-palette, A200, A100, A400);
+$hoa-angular-primary: mat.define-palette($blue-palette);
+$hoa-angular-accent: mat.define-palette($green-palette);
 
 // The warn palette is optional (defaults to red).
 $hoa-angular-warn: mat.define-palette(mat.$red-palette);
@@ -35,6 +101,7 @@ $hoa-angular-theme: mat.define-light-theme((
 
 /* You can add global styles to this file, and also import other style files */
 
+/* Override Bootstrap colors */
 $primary:       rgb(0, 75, 140);
 $secondary:     rgb(44, 134, 65);
 
