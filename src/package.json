@@ -8,7 +8,7 @@
     "build:prod": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "aws s3 sync --delete dist/cmh.vmf.poc.hoa-angular s3://sandbox-vmf-angularpoc"
+    "deploy": "aws s3 sync --delete dist/cmh.vmf.poc.hoa-angular s3://$(S3BucketName) --cache-control max-age=86400000,public && aws s3 cp s3://$(S3BucketName) s3://$(S3BucketName) --recursive --include \"*.html\" --metadata-directive REPLACE --cache-control max-age=0,must-revalidate,public --content-type \"text/html; charset=utf-8\" && aws cloudfront create-invalidation - distribution-id $cloudFrontId - paths \"/*\""
   },
   "private": true,
   "dependencies": {
